@@ -22,12 +22,10 @@
       }
     ],
     "baseUrl": ".",
-
     "paths": {
-      
-      "@/components/*": ["src/components/*"],
-      "@/app/page/*": ["src/app/page/*"] // Make sure this path is correct
-    }
+      "@/*": ["./src/*"]
+    },
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
     "next-env.d.ts",

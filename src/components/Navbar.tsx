@@ -42,6 +42,7 @@ export default function Navbar() {
             <Link href="https://www.upwomxn.org/united-proud-women-library/"className="pr-4">Library / Readings</Link>
             <Link href="https://www.upwomxn.org/theater-review/"className="pr-4">Theatre Review</Link>
             <Link href="https://www.upwomxn.org/connect/"className="pr-4">Connect</Link>
+            <Link href="https://referral-form-fronted.vercel.app/referral"className="pr-4">Referral</Link>
           </div>
         </div>
       </div>

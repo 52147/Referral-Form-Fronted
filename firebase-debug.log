@@ -1,22 +1,22 @@
-[debug] [2024-03-01T10:17:16.991Z] ----------------------------------------------------------------------
-[debug] [2024-03-01T10:17:16.992Z] Command:       /usr/local/bin/node /opt/homebrew/bin/firebase deploy
-[debug] [2024-03-01T10:17:16.992Z] CLI Version:   12.3.1
-[debug] [2024-03-01T10:17:16.993Z] Platform:      darwin
-[debug] [2024-03-01T10:17:16.993Z] Node Version:  v20.11.0
-[debug] [2024-03-01T10:17:16.993Z] Time:          Fri Mar 01 2024 04:17:16 GMT-0600 (Central Standard Time)
-[debug] [2024-03-01T10:17:16.993Z] ----------------------------------------------------------------------
+[debug] [2024-03-01T11:33:07.768Z] ----------------------------------------------------------------------
+[debug] [2024-03-01T11:33:07.769Z] Command:       /usr/local/bin/node /opt/homebrew/bin/firebase deploy --debug
+[debug] [2024-03-01T11:33:07.769Z] CLI Version:   12.3.1
+[debug] [2024-03-01T11:33:07.769Z] Platform:      darwin
+[debug] [2024-03-01T11:33:07.770Z] Node Version:  v20.11.0
+[debug] [2024-03-01T11:33:07.770Z] Time:          Fri Mar 01 2024 05:33:07 GMT-0600 (Central Standard Time)
+[debug] [2024-03-01T11:33:07.770Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2024-03-01T10:17:17.029Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2024-03-01T10:17:17.030Z] > authorizing via signed-in user (debra4117@gmail.com)
-[debug] [2024-03-01T10:17:17.030Z] [iam] checking project upw-referral-form-fronted for permissions ["firebase.projects.get","firebasehosting.sites.update"]
-[debug] [2024-03-01T10:17:17.031Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions [none]
-[debug] [2024-03-01T10:17:17.031Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions x-goog-quota-user=projects/upw-referral-form-fronted
-[debug] [2024-03-01T10:17:17.031Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
-[debug] [2024-03-01T10:17:17.203Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions 200
-[debug] [2024-03-01T10:17:17.204Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
-[debug] [2024-03-01T10:17:17.204Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted [none]
-[debug] [2024-03-01T10:17:17.527Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted 200
-[debug] [2024-03-01T10:17:17.528Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted {"projectId":"upw-referral-form-fronted","projectNumber":"365759952","displayName":"UPW Referral Form Fronted","name":"projects/upw-referral-form-fronted","resources":{"hostingSite":"upw-referral-form-fronted"},"state":"ACTIVE","etag":"1_82220cb7-1780-4e07-8633-98fd9cf5253c"}
+[debug] [2024-03-01T11:33:07.806Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-03-01T11:33:07.806Z] > authorizing via signed-in user (debra4117@gmail.com)
+[debug] [2024-03-01T11:33:07.806Z] [iam] checking project upw-referral-form-fronted for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2024-03-01T11:33:07.807Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions [none]
+[debug] [2024-03-01T11:33:07.807Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions x-goog-quota-user=projects/upw-referral-form-fronted
+[debug] [2024-03-01T11:33:07.808Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2024-03-01T11:33:08.047Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions 200
+[debug] [2024-03-01T11:33:08.048Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2024-03-01T11:33:08.048Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted [none]
+[debug] [2024-03-01T11:33:08.249Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted 200
+[debug] [2024-03-01T11:33:08.250Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted {"projectId":"upw-referral-form-fronted","projectNumber":"365759952","displayName":"UPW Referral Form Fronted","name":"projects/upw-referral-form-fronted","resources":{"hostingSite":"upw-referral-form-fronted"},"state":"ACTIVE","etag":"1_82220cb7-1780-4e07-8633-98fd9cf5253c"}
 [info] 
    Thank you for trying our early preview of Next.js support on Firebase Hosting.
    During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
@@ -27,166 +27,6 @@
 
    We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
 
-[debug] [2024-03-01T10:17:27.173Z] Error: ENOENT: no such file or directory, open '/Users/shou-tzuhan/Downloads/Next-Template-main/.next/server/client-reference-manifest.js'
-[error] 
-[error] Error: An unexpected error has occurred.
-[debug] [2024-03-01T10:18:09.295Z] ----------------------------------------------------------------------
-[debug] [2024-03-01T10:18:09.297Z] Command:       /usr/local/bin/node /opt/homebrew/bin/firebase deploy
-[debug] [2024-03-01T10:18:09.297Z] CLI Version:   12.3.1
-[debug] [2024-03-01T10:18:09.297Z] Platform:      darwin
-[debug] [2024-03-01T10:18:09.297Z] Node Version:  v20.11.0
-[debug] [2024-03-01T10:18:09.297Z] Time:          Fri Mar 01 2024 04:18:09 GMT-0600 (Central Standard Time)
-[debug] [2024-03-01T10:18:09.297Z] ----------------------------------------------------------------------
-[debug] 
-[debug] [2024-03-01T10:18:09.339Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2024-03-01T10:18:09.340Z] > authorizing via signed-in user (debra4117@gmail.com)
-[debug] [2024-03-01T10:18:09.340Z] [iam] checking project upw-referral-form-fronted for permissions ["firebase.projects.get","firebasehosting.sites.update"]
-[debug] [2024-03-01T10:18:09.341Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions [none]
-[debug] [2024-03-01T10:18:09.341Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions x-goog-quota-user=projects/upw-referral-form-fronted
-[debug] [2024-03-01T10:18:09.341Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
-[debug] [2024-03-01T10:18:09.759Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions 200
-[debug] [2024-03-01T10:18:09.759Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
-[debug] [2024-03-01T10:18:09.760Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted [none]
-[debug] [2024-03-01T10:18:10.087Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted 200
-[debug] [2024-03-01T10:18:10.087Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted {"projectId":"upw-referral-form-fronted","projectNumber":"365759952","displayName":"UPW Referral Form Fronted","name":"projects/upw-referral-form-fronted","resources":{"hostingSite":"upw-referral-form-fronted"},"state":"ACTIVE","etag":"1_82220cb7-1780-4e07-8633-98fd9cf5253c"}
-[info] 
-   Thank you for trying our early preview of Next.js support on Firebase Hosting.
-   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
-
-   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
-   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
-   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
-
-   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
-
-[debug] [2024-03-01T10:18:23.615Z] Error: ENOENT: no such file or directory, open '/Users/shou-tzuhan/Downloads/Next-Template-main/.next/server/client-reference-manifest.js'
-[error] 
-[error] Error: An unexpected error has occurred.
-[debug] [2024-03-01T10:18:31.319Z] ----------------------------------------------------------------------
-[debug] [2024-03-01T10:18:31.320Z] Command:       /usr/local/bin/node /opt/homebrew/bin/firebase deploy --debug
-[debug] [2024-03-01T10:18:31.320Z] CLI Version:   12.3.1
-[debug] [2024-03-01T10:18:31.321Z] Platform:      darwin
-[debug] [2024-03-01T10:18:31.321Z] Node Version:  v20.11.0
-[debug] [2024-03-01T10:18:31.321Z] Time:          Fri Mar 01 2024 04:18:31 GMT-0600 (Central Standard Time)
-[debug] [2024-03-01T10:18:31.321Z] ----------------------------------------------------------------------
-[debug] 
-[debug] [2024-03-01T10:18:31.356Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2024-03-01T10:18:31.357Z] > authorizing via signed-in user (debra4117@gmail.com)
-[debug] [2024-03-01T10:18:31.357Z] [iam] checking project upw-referral-form-fronted for permissions ["firebase.projects.get","firebasehosting.sites.update"]
-[debug] [2024-03-01T10:18:31.358Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions [none]
-[debug] [2024-03-01T10:18:31.358Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions x-goog-quota-user=projects/upw-referral-form-fronted
-[debug] [2024-03-01T10:18:31.358Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
-[debug] [2024-03-01T10:18:31.531Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions 200
-[debug] [2024-03-01T10:18:31.531Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
-[debug] [2024-03-01T10:18:31.531Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted [none]
-[debug] [2024-03-01T10:18:31.775Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted 200
-[debug] [2024-03-01T10:18:31.776Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted {"projectId":"upw-referral-form-fronted","projectNumber":"365759952","displayName":"UPW Referral Form Fronted","name":"projects/upw-referral-form-fronted","resources":{"hostingSite":"upw-referral-form-fronted"},"state":"ACTIVE","etag":"1_82220cb7-1780-4e07-8633-98fd9cf5253c"}
-[info] 
-   Thank you for trying our early preview of Next.js support on Firebase Hosting.
-   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
-
-   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
-   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
-   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
-
-   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
-
-[debug] [2024-03-01T10:18:41.626Z] Error: ENOENT: no such file or directory, open '/Users/shou-tzuhan/Downloads/Next-Template-main/.next/server/client-reference-manifest.js'
-[error] 
-[error] Error: An unexpected error has occurred.
-[debug] [2024-03-01T10:23:35.750Z] ----------------------------------------------------------------------
-[debug] [2024-03-01T10:23:35.751Z] Command:       /usr/local/bin/node /opt/homebrew/bin/firebase deploy --debug
-[debug] [2024-03-01T10:23:35.752Z] CLI Version:   12.3.1
-[debug] [2024-03-01T10:23:35.752Z] Platform:      darwin
-[debug] [2024-03-01T10:23:35.752Z] Node Version:  v20.11.0
-[debug] [2024-03-01T10:23:35.752Z] Time:          Fri Mar 01 2024 04:23:35 GMT-0600 (Central Standard Time)
-[debug] [2024-03-01T10:23:35.752Z] ----------------------------------------------------------------------
-[debug] 
-[debug] [2024-03-01T10:23:35.786Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2024-03-01T10:23:35.787Z] > authorizing via signed-in user (debra4117@gmail.com)
-[debug] [2024-03-01T10:23:35.787Z] [iam] checking project upw-referral-form-fronted for permissions ["firebase.projects.get","firebasehosting.sites.update"]
-[debug] [2024-03-01T10:23:35.788Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions [none]
-[debug] [2024-03-01T10:23:35.788Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions x-goog-quota-user=projects/upw-referral-form-fronted
-[debug] [2024-03-01T10:23:35.788Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
-[debug] [2024-03-01T10:23:35.973Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions 200
-[debug] [2024-03-01T10:23:35.973Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
-[debug] [2024-03-01T10:23:35.974Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted [none]
-[debug] [2024-03-01T10:23:36.511Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted 200
-[debug] [2024-03-01T10:23:36.512Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted {"projectId":"upw-referral-form-fronted","projectNumber":"365759952","displayName":"UPW Referral Form Fronted","name":"projects/upw-referral-form-fronted","resources":{"hostingSite":"upw-referral-form-fronted"},"state":"ACTIVE","etag":"1_82220cb7-1780-4e07-8633-98fd9cf5253c"}
-[info] 
-   Thank you for trying our early preview of Next.js support on Firebase Hosting.
-   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
-
-   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
-   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
-   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
-
-   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
-
-[debug] [2024-03-01T10:23:50.063Z] Error: ENOENT: no such file or directory, open '/Users/shou-tzuhan/Downloads/Next-Template-main/.next/server/middleware-manifest.json'
-[error] 
-[error] Error: An unexpected error has occurred.
-[debug] [2024-03-01T10:29:13.010Z] ----------------------------------------------------------------------
-[debug] [2024-03-01T10:29:13.012Z] Command:       /usr/local/bin/node /opt/homebrew/bin/firebase deploy --debug
-[debug] [2024-03-01T10:29:13.012Z] CLI Version:   12.3.1
-[debug] [2024-03-01T10:29:13.012Z] Platform:      darwin
-[debug] [2024-03-01T10:29:13.013Z] Node Version:  v20.11.0
-[debug] [2024-03-01T10:29:13.013Z] Time:          Fri Mar 01 2024 04:29:13 GMT-0600 (Central Standard Time)
-[debug] [2024-03-01T10:29:13.013Z] ----------------------------------------------------------------------
-[debug] 
-[debug] [2024-03-01T10:29:13.050Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2024-03-01T10:29:13.050Z] > authorizing via signed-in user (debra4117@gmail.com)
-[debug] [2024-03-01T10:29:13.051Z] [iam] checking project upw-referral-form-fronted for permissions ["firebase.projects.get","firebasehosting.sites.update"]
-[debug] [2024-03-01T10:29:13.052Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions [none]
-[debug] [2024-03-01T10:29:13.052Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions x-goog-quota-user=projects/upw-referral-form-fronted
-[debug] [2024-03-01T10:29:13.052Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
-[debug] [2024-03-01T10:29:13.221Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions 200
-[debug] [2024-03-01T10:29:13.221Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
-[debug] [2024-03-01T10:29:13.221Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted [none]
-[debug] [2024-03-01T10:29:13.553Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted 200
-[debug] [2024-03-01T10:29:13.553Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted {"projectId":"upw-referral-form-fronted","projectNumber":"365759952","displayName":"UPW Referral Form Fronted","name":"projects/upw-referral-form-fronted","resources":{"hostingSite":"upw-referral-form-fronted"},"state":"ACTIVE","etag":"1_82220cb7-1780-4e07-8633-98fd9cf5253c"}
-[info] 
-   Thank you for trying our early preview of Next.js support on Firebase Hosting.
-   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
-
-   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
-   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
-   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
-
-   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
-
-[debug] [2024-03-01T10:29:33.136Z] Error: ENOENT: no such file or directory, open '/Users/shou-tzuhan/Downloads/Next-Template-main/.next/server/client-reference-manifest.js'
-[error] 
-[error] Error: An unexpected error has occurred.
-[debug] [2024-03-01T10:43:31.633Z] ----------------------------------------------------------------------
-[debug] [2024-03-01T10:43:31.635Z] Command:       /usr/local/bin/node /opt/homebrew/bin/firebase deploy --debug
-[debug] [2024-03-01T10:43:31.635Z] CLI Version:   12.3.1
-[debug] [2024-03-01T10:43:31.636Z] Platform:      darwin
-[debug] [2024-03-01T10:43:31.636Z] Node Version:  v20.11.0
-[debug] [2024-03-01T10:43:31.636Z] Time:          Fri Mar 01 2024 04:43:31 GMT-0600 (Central Standard Time)
-[debug] [2024-03-01T10:43:31.636Z] ----------------------------------------------------------------------
-[debug] 
-[debug] [2024-03-01T10:43:31.672Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2024-03-01T10:43:31.672Z] > authorizing via signed-in user (debra4117@gmail.com)
-[debug] [2024-03-01T10:43:31.672Z] [iam] checking project upw-referral-form-fronted for permissions ["firebase.projects.get","firebasehosting.sites.update"]
-[debug] [2024-03-01T10:43:31.673Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions [none]
-[debug] [2024-03-01T10:43:31.673Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions x-goog-quota-user=projects/upw-referral-form-fronted
-[debug] [2024-03-01T10:43:31.673Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
-[debug] [2024-03-01T10:43:31.931Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions 200
-[debug] [2024-03-01T10:43:31.932Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/upw-referral-form-fronted:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
-[debug] [2024-03-01T10:43:31.932Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted [none]
-[debug] [2024-03-01T10:43:32.167Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted 200
-[debug] [2024-03-01T10:43:32.167Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/upw-referral-form-fronted {"projectId":"upw-referral-form-fronted","projectNumber":"365759952","displayName":"UPW Referral Form Fronted","name":"projects/upw-referral-form-fronted","resources":{"hostingSite":"upw-referral-form-fronted"},"state":"ACTIVE","etag":"1_82220cb7-1780-4e07-8633-98fd9cf5253c"}
-[info] 
-   Thank you for trying our early preview of Next.js support on Firebase Hosting.
-   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
-
-   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
-   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
-   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
-
-   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
-
-[debug] [2024-03-01T10:43:45.692Z] Error: ENOENT: no such file or directory, open '/Users/shou-tzuhan/Downloads/Next-Template-main/.next/server/client-reference-manifest.js'
+[debug] [2024-03-01T11:33:20.068Z] Error: ENOENT: no such file or directory, open '/Users/shou-tzuhan/Downloads/Next-Template-main/.next/server/client-reference-manifest.js'
 [error] 
 [error] Error: An unexpected error has occurred.

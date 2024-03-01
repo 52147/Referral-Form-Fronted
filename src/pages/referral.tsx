@@ -7,7 +7,6 @@ export default function Home() {
     <Page>
       <div className="home-content">
         <DataList />
-        {/* Additional home page content here */}
       </div>
     </Page>
   );
