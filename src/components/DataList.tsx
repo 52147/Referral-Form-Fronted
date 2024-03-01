@@ -27,7 +27,7 @@ function DataList() {
   const [editRowId, setEditRowId] = useState(null);
   const [newRecord, setNewRecord] = useState<RecordType>({
     id: -1,
-    name: "",
+    Name: "",
     status: "Active",
   });
   const [dateFilter, setDateFilter] = useState("");
@@ -163,12 +163,14 @@ function DataList() {
   };
 
   const handleAddNewRecord = () => {
+    console.log(newRecord)
     // Check if all necessary data is input
     if (Object.values(newRecord).some((value) => value === "")) {
       // If not all data is input, show modal
       setShow(true); // show warning modal
     } else {
       const values = Object.values(newRecord);
+      
       axios
         .post("https://pear-cocoon-hose.cyclic.app/add-row", { values })
         .then(() => {
