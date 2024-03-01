@@ -1,7 +1,7 @@
+"use client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faDiscord,
-  faFacebook,
   faInstagram,
   faLinkedin,
   faWhatsapp,
@@ -21,52 +21,73 @@ export default function Footer() {
         <h2 className="text-xl font-semibold text-gray-800 mb-6">
           STAY CONNECTED
         </h2>
-        <div className="flex justify-center gap-4 mb-4">
+        <div className="flex justify-center gap-4 mb-4 flex-wrap">
           {/* Add the correct links to your social media pages */}
           <a
             href="https://www.youtube.com/channel/UCH7FpqzB2FREHifKRYWKU4Q"
-            className="hover:text-red-800"
-            style={{ color: "#e495c1" }}
+            className="social-icon youtube"
           >
             <FontAwesomeIcon icon={faYoutube} />
           </a>
           <a
             href="https://www.instagram.com/upwomxn/"
-            className="text-pink-600"
-            style={{ color: "#e495c1" }}
+            className="text-pink-600 social-icon youtube"
           >
             <FontAwesomeIcon icon={faInstagram} />
           </a>
           <a
             href="mailto:support@upwomxn.org"
-            className="text-gray-600"
-            style={{ color: "#e495c1" }}
+            className="text-gray-600 social-icon youtube"
           >
             <FontAwesomeIcon icon={faEnvelope} />
           </a>
           <a
             href="https://chat.whatsapp.com/HoJRcHtaF65GT74lALG7wu"
-            className="text-green-600"
-            style={{ color: "#e495c1" }}
+            className="text-green-600 social-icon youtube"
           >
             <FontAwesomeIcon icon={faWhatsapp} />
           </a>
           <a
             href="https://www.linkedin.com/company/upwomxn/about/"
-            className="text-blue-600"
-            style={{ color: "#e495c1" }}
+            className="text-blue-600 social-icon youtube"
           >
             <FontAwesomeIcon icon={faLinkedin} />
           </a>
           <a
             href="https://discord.com/invite/nxUTpuX79h"
-            className="text-blue-600"
-            style={{ color: "#e495c1" }}
+            className="text-blue-600 social-icon youtube"
           >
             <FontAwesomeIcon icon={faDiscord} />
           </a>
         </div>
       </div>
+      <style jsx>{`
+        .social-icon {
+          color: #e495c1;
+        }
+
+        .social-icon.youtube:hover {
+          color:#a80f6a /* YouTube Red */
+        }
+
+        @media (max-width: 640px) {
+          footer {
+            padding: 3rem 1rem; /* Adjust padding on smaller screens */
+          }
+
+          footer .max-w-screen-lg {
+            flex-direction: column; /* Stack elements vertically */
+          }
+
+          footer h2 {
+            margin-bottom: 2rem;
+          }
+
+          footer .social-icon {
+            margin: 0.5rem; /* Space out icons a bit more on small screens */
+          }
+        }
+      `}</style>
     </footer>
   );
 }
