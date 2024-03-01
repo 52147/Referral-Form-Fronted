@@ -1,28 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, ChangeEvent  } from "react";
 import axios from "axios";
-import { Button, Form, Container, Table, Pagination } from "react-bootstrap";
-
+import { Form, Container, Table, Pagination } from "react-bootstrap";
+// Define an interface for the structure of a row in your data
+interface DataRow {
+    id: number;
+    // Add other fields according to your data structure
+    [key: string]: any; // Use this if your data structure includes dynamic keys
+  }
+  interface RecordType {
+    id?: number;
+    // other fields, all optional
+    [key: string]: any; // or more specific types if applicable
+  }
+  
+  
 function DataList() {
-  const [data, setData] = useState([]);
-  const [editRowId, setEditRowId] = useState(null);
-  const [newRecord, setNewRecord] = useState({});
-  const [dateFilter, setDateFilter] = useState("");
+    const [data, setData] = useState<DataRow[]>([]);
+    const [editRowId, setEditRowId] = useState(null);
+    const [newRecord, setNewRecord] = useState<RecordType>({id: -1, name: "", status: "Active"});
+    const [dateFilter, setDateFilter] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  //   const [filteredData, setFilteredData] = useState([]); // New state for filtered data
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+  const [itemsPerPage] = useState(10);
   const [filter, setFilter] = useState("all");
   const [order, setOrder] = useState("ascending");
   const [activeFilter, setActiveFilter] = useState("");
   const [activeOrder, setActiveOrder] = useState("ascending"); // To track the active order
 
-  const handleOrderChange = (newOrder) => {
+  const handleOrderChange = (newOrder: string) => {
     setOrder(newOrder);
     setActiveOrder(newOrder); // Update the active order state
   };
 
-  const handleFilterChange = (newFilter) => {
+  const handleFilterChange = (newFilter: string) => {
     setFilter(newFilter);
     setActiveFilter(newFilter); // Update the active filter state
   };
@@ -42,42 +53,49 @@ function DataList() {
     axios
       .get(`https://pear-cocoon-hose.cyclic.app/data`)
       .then((response) => {
-        const formattedData = response.data.slice(1).map((row, index) => {
-          const obj = {};
-          response.data[0].forEach((header, idx) => {
+        // Assuming the response data is an array of arrays
+        const headers = response.data[0] as string[]; // The first row is headers
+        const rows = response.data.slice(1) as any[][]; // The rest are data rows
+        
+        const formattedData: DataRow[] = rows.map((row, index) => {
+          const obj: DataRow = { id: index }; // Initialize with id
+          headers.forEach((header, idx) => {
             obj[header] = row[idx];
           });
-          return { id: index, ...obj };
+          return obj;
         });
+        
         setData(formattedData);
-        setFilteredData(formattedData); // Initialize filteredData with the same data
       })
       .catch((error) => console.error("Error fetching data: ", error));
   };
+  useEffect(() => {
+    fetchData();
+  }, []); // The empty array ensures this effect runs once after the initial render
+  
   const handleSort = () => {
     const sorted = [...data];
     if (dateFilter === "asc") {
-      sorted.sort((a, b) => new Date(a["Date Added"]) - new Date(b.DateAdded));
+      sorted.sort((a, b) => new Date(a["Date Added"]).getTime() - new Date(b["Date Added"]).getTime());
     } else if (dateFilter === "desc") {
-      sorted.sort(
-        (a, b) => new Date(b["Date Added"]) - new Date(a["Date Added"])
-      );
+      sorted.sort((a, b) => new Date(b["Date Added"]).getTime() - new Date(a["Date Added"]).getTime());
     }
     console.log(sorted);
     setData(sorted);
-  };
-  const handleEdit = (id) => {
+};
+
+  const handleEdit = (id:any) => {
     setEditRowId(id);
   };
 
-  const handleRowChange = (e, id) => {
+  const handleRowChange = (e:any, id:any) => {
     const { name, value } = e.target;
     setData(
       data.map((row) => (row.id === id ? { ...row, [name]: value } : row))
     );
   };
 
-  const handleDelete = (range) => {
+  const handleDelete = (range:any) => {
     axios
       .post("https://pear-cocoon-hose.cyclic.app/clear-values", { range })
       .then(() => {
@@ -90,32 +108,39 @@ function DataList() {
       });
   };
 
-  const handleSave = (id) => {
+  const handleSave = (id:number) => {
     const updatedRow = data.find((row) => row.id === id);
     const range = `Sheet1!A${id + 2}:L${id + 2}`;
-    const values = Object.values(updatedRow).slice(1);
-    const payload = {
-      range: range,
-      values: values,
-    };
+    if (updatedRow) {
+        const values = Object.values(updatedRow).slice(1);
+        const payload = {
+          range: range,
+          values: values,
+        };
+    
+        axios
+          .post("https://pear-cocoon-hose.cyclic.app/update-values", payload)
+          .then(() => {
+            alert("Row updated successfully");
+            setEditRowId(null); // Exit edit mode
+            fetchData(); // Refresh the data list
+          })
+          .catch((error) => {
+            alert("Error updating row");
+            console.error(error);
+          });
+    }else{
+        console.error("Updated row not found");
 
-    axios
-      .post("https://pear-cocoon-hose.cyclic.app/update-values", payload)
-      .then(() => {
-        alert("Row updated successfully");
-        setEditRowId(null); // Exit edit mode
-        fetchData(); // Refresh the data list
-      })
-      .catch((error) => {
-        alert("Error updating row");
-        console.error(error);
-      });
+    }
+    
   };
-
-  const handleNewRecordChange = (e) => {
-    const { name, value } = e.target;
-    setNewRecord({ ...newRecord, [name]: value });
+  const handleNewRecordChange = (e: ChangeEvent<any>) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setNewRecord(prev => ({ ...prev, [name]: value }));
   };
+  
 
   const handleAddNewRecord = () => {
     const values = Object.values(newRecord);
@@ -131,12 +156,12 @@ function DataList() {
         console.error(error);
       });
   };
-  const handleDateFilterChange = (e) => {
+  const handleDateFilterChange = (e:any) => {
     const newFilter = e.target.value;
     setDateFilter(newFilter);
   };
 
-  const handleSearch = (e) => {
+  const handleSearch = (e:any) => {
     const keyword = e.target.value.toLowerCase(); // Get the keyword entered by the user and convert it to lowercase
     setSearchTerm(keyword); // Update the search term state
     // Update the search query state based on the keyword
@@ -185,7 +210,7 @@ function DataList() {
   const currentData = data.slice(firstIndex, lastIndex);
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
     <Container
@@ -371,18 +396,16 @@ function DataList() {
         </tbody>
       </Table>
       <Pagination className="justify-content-center">
-        {" "}
-        {/* Center the pagination */}
-        {[...Array(totalPages).keys()].map((number) => (
-          <Pagination.Item
-            key={number + 1}
-            active={number + 1 === currentPage}
-            onClick={() => paginate(number + 1)}
-          >
-            {number + 1}
-          </Pagination.Item>
-        ))}
-      </Pagination>
+  {Array.from({ length: totalPages }, (_, index) => (
+    <Pagination.Item
+      key={index + 1}
+      active={index + 1 === currentPage}
+      onClick={() => paginate(index + 1)}
+    >
+      {index + 1}
+    </Pagination.Item>
+  ))}
+</Pagination>
     </Container>
   );
 }

@@ -1,6 +1,6 @@
-import Page from "@/app/page";
+import Page from "../app/page";
 import React from "react";
-import DataList from "@/components/DataList"; // Adjust the import path as needed
+import DataList from "../components/DataList"; // Adjust the import path as needed
 
 export default function Home() {
   return (

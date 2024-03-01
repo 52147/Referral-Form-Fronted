@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faDiscord,
   faFacebook,
   faInstagram,
   faLinkedin,
@@ -23,46 +24,46 @@ export default function Footer() {
         <div className="flex justify-center gap-4 mb-4">
           {/* Add the correct links to your social media pages */}
           <a
-            href="https://youtube.com"
+            href="https://www.youtube.com/channel/UCH7FpqzB2FREHifKRYWKU4Q"
             className="hover:text-red-800"
             style={{ color: "#e495c1" }}
           >
             <FontAwesomeIcon icon={faYoutube} />
           </a>
           <a
-            href="https://instagram.com"
+            href="https://www.instagram.com/upwomxn/"
             className="text-pink-600"
             style={{ color: "#e495c1" }}
           >
             <FontAwesomeIcon icon={faInstagram} />
           </a>
           <a
-            href="mailto:your-email@example.com"
+            href="mailto:support@upwomxn.org"
             className="text-gray-600"
             style={{ color: "#e495c1" }}
           >
             <FontAwesomeIcon icon={faEnvelope} />
           </a>
           <a
-            href="https://api.whatsapp.com/send"
+            href="https://chat.whatsapp.com/HoJRcHtaF65GT74lALG7wu"
             className="text-green-600"
             style={{ color: "#e495c1" }}
           >
             <FontAwesomeIcon icon={faWhatsapp} />
           </a>
           <a
-            href="https://linkedin.com"
+            href="https://www.linkedin.com/company/upwomxn/about/"
             className="text-blue-600"
             style={{ color: "#e495c1" }}
           >
             <FontAwesomeIcon icon={faLinkedin} />
           </a>
           <a
-            href="https://facebook.com"
+            href="https://discord.com/invite/nxUTpuX79h"
             className="text-blue-600"
             style={{ color: "#e495c1" }}
           >
-            <FontAwesomeIcon icon={faFacebook} />
+            <FontAwesomeIcon icon={faDiscord} />
           </a>
         </div>
       </div>
