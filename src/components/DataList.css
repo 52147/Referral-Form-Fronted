@@ -1,0 +1,6 @@
+/* Add this style to remove hover effect */
+.close-button {
+  background: #5e5858 !important;
+  text-decoration: none;
+  color: #ffffff !important;
+}

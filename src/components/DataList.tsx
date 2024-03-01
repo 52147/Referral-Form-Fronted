@@ -1,24 +1,36 @@
-import React, { useEffect, useState, ChangeEvent  } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 import axios from "axios";
-import { Form, Container, Table, Pagination } from "react-bootstrap";
+import {
+  Form,
+  Container,
+  Table,
+  Pagination,
+  Modal,
+  Button,
+} from "react-bootstrap";
+import "./DataList.css";
+
 // Define an interface for the structure of a row in your data
 interface DataRow {
-    id: number;
-    // Add other fields according to your data structure
-    [key: string]: any; // Use this if your data structure includes dynamic keys
-  }
-  interface RecordType {
-    id?: number;
-    // other fields, all optional
-    [key: string]: any; // or more specific types if applicable
-  }
-  
-  
+  id: number;
+  // Add other fields according to your data structure
+  [key: string]: any; // Use this if your data structure includes dynamic keys
+}
+interface RecordType {
+  id?: number;
+  // other fields, all optional
+  [key: string]: any; // or more specific types if applicable
+}
+
 function DataList() {
-    const [data, setData] = useState<DataRow[]>([]);
-    const [editRowId, setEditRowId] = useState(null);
-    const [newRecord, setNewRecord] = useState<RecordType>({id: -1, name: "", status: "Active"});
-    const [dateFilter, setDateFilter] = useState("");
+  const [data, setData] = useState<DataRow[]>([]);
+  const [editRowId, setEditRowId] = useState(null);
+  const [newRecord, setNewRecord] = useState<RecordType>({
+    id: -1,
+    name: "",
+    status: "Active",
+  });
+  const [dateFilter, setDateFilter] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,6 +39,9 @@ function DataList() {
   const [order, setOrder] = useState("ascending");
   const [activeFilter, setActiveFilter] = useState("");
   const [activeOrder, setActiveOrder] = useState("ascending"); // To track the active order
+  const [show, setShow] = useState(false);
+  // Function to toggle the modal
+  const handleClose = () => setShow(false);
 
   const handleOrderChange = (newOrder: string) => {
     setOrder(newOrder);
@@ -56,7 +71,7 @@ function DataList() {
         // Assuming the response data is an array of arrays
         const headers = response.data[0] as string[]; // The first row is headers
         const rows = response.data.slice(1) as any[][]; // The rest are data rows
-        
+
         const formattedData: DataRow[] = rows.map((row, index) => {
           const obj: DataRow = { id: index }; // Initialize with id
           headers.forEach((header, idx) => {
@@ -64,7 +79,7 @@ function DataList() {
           });
           return obj;
         });
-        
+
         setData(formattedData);
       })
       .catch((error) => console.error("Error fetching data: ", error));
@@ -72,30 +87,38 @@ function DataList() {
   useEffect(() => {
     fetchData();
   }, []); // The empty array ensures this effect runs once after the initial render
-  
+
   const handleSort = () => {
     const sorted = [...data];
     if (dateFilter === "asc") {
-      sorted.sort((a, b) => new Date(a["Date Added"]).getTime() - new Date(b["Date Added"]).getTime());
+      sorted.sort(
+        (a, b) =>
+          new Date(a["Date Added"]).getTime() -
+          new Date(b["Date Added"]).getTime()
+      );
     } else if (dateFilter === "desc") {
-      sorted.sort((a, b) => new Date(b["Date Added"]).getTime() - new Date(a["Date Added"]).getTime());
+      sorted.sort(
+        (a, b) =>
+          new Date(b["Date Added"]).getTime() -
+          new Date(a["Date Added"]).getTime()
+      );
     }
     console.log(sorted);
     setData(sorted);
-};
+  };
 
-  const handleEdit = (id:any) => {
+  const handleEdit = (id: any) => {
     setEditRowId(id);
   };
 
-  const handleRowChange = (e:any, id:any) => {
+  const handleRowChange = (e: any, id: any) => {
     const { name, value } = e.target;
     setData(
       data.map((row) => (row.id === id ? { ...row, [name]: value } : row))
     );
   };
 
-  const handleDelete = (range:any) => {
+  const handleDelete = (range: any) => {
     axios
       .post("https://pear-cocoon-hose.cyclic.app/clear-values", { range })
       .then(() => {
@@ -108,60 +131,63 @@ function DataList() {
       });
   };
 
-  const handleSave = (id:number) => {
+  const handleSave = (id: number) => {
     const updatedRow = data.find((row) => row.id === id);
     const range = `Sheet1!A${id + 2}:L${id + 2}`;
     if (updatedRow) {
-        const values = Object.values(updatedRow).slice(1);
-        const payload = {
-          range: range,
-          values: values,
-        };
-    
-        axios
-          .post("https://pear-cocoon-hose.cyclic.app/update-values", payload)
-          .then(() => {
-            alert("Row updated successfully");
-            setEditRowId(null); // Exit edit mode
-            fetchData(); // Refresh the data list
-          })
-          .catch((error) => {
-            alert("Error updating row");
-            console.error(error);
-          });
-    }else{
-        console.error("Updated row not found");
+      const values = Object.values(updatedRow).slice(1);
+      const payload = {
+        range: range,
+        values: values,
+      };
 
+      axios
+        .post("https://pear-cocoon-hose.cyclic.app/update-values", payload)
+        .then(() => {
+          alert("Row updated successfully");
+          setEditRowId(null); // Exit edit mode
+          fetchData(); // Refresh the data list
+        })
+        .catch((error) => {
+          alert("Error updating row");
+          console.error(error);
+        });
+    } else {
+      console.error("Updated row not found");
     }
-    
   };
   const handleNewRecordChange = (e: ChangeEvent<any>) => {
     const name = e.target.name;
     const value = e.target.value;
-    setNewRecord(prev => ({ ...prev, [name]: value }));
+    setNewRecord((prev) => ({ ...prev, [name]: value }));
   };
-  
 
   const handleAddNewRecord = () => {
-    const values = Object.values(newRecord);
-    axios
-      .post("https://pear-cocoon-hose.cyclic.app/add-row", { values })
-      .then(() => {
-        alert("New record added successfully");
-        setNewRecord({}); // Reset new record form
-        fetchData(); // Refresh the data list
-      })
-      .catch((error) => {
-        alert("Error adding new record");
-        console.error(error);
-      });
+    // Check if all necessary data is input
+    if (Object.values(newRecord).some((value) => value === "")) {
+      // If not all data is input, show modal
+      setShow(true); // show warning modal
+    } else {
+      const values = Object.values(newRecord);
+      axios
+        .post("https://pear-cocoon-hose.cyclic.app/add-row", { values })
+        .then(() => {
+          alert("New record added successfully");
+          setNewRecord({}); // Reset new record form
+          fetchData(); // Refresh the data list
+        })
+        .catch((error) => {
+          alert("Error adding new record");
+          console.error(error);
+        });
+    }
   };
-  const handleDateFilterChange = (e:any) => {
+  const handleDateFilterChange = (e: any) => {
     const newFilter = e.target.value;
     setDateFilter(newFilter);
   };
 
-  const handleSearch = (e:any) => {
+  const handleSearch = (e: any) => {
     const keyword = e.target.value.toLowerCase(); // Get the keyword entered by the user and convert it to lowercase
     setSearchTerm(keyword); // Update the search term state
     // Update the search query state based on the keyword
@@ -173,6 +199,14 @@ function DataList() {
     .filter(
       (item) => filter === "all" || item["Current Position/Title"] === filter
     )
+    .filter((item) =>
+      Object.values(item).some(
+        (val) =>
+          val &&
+          typeof val === "string" &&
+          val.toLowerCase().includes(searchTerm)
+      )
+    )
     .sort((a, b) => {
       const dateA = a["Date Added"]?.toString() || ""; // Convert to string with a fallback
       const dateB = b["Date Added"]?.toString() || ""; // Convert to string with a fallback
@@ -183,6 +217,7 @@ function DataList() {
         return dateB.localeCompare(dateA);
       }
     });
+
   const handleRemoveAllFilters = () => {
     // Reset the filter to show all items
     setFilter("all"); // Assuming 'all' is the value used to display all items
@@ -207,14 +242,20 @@ function DataList() {
   // Pagination logic
   const lastIndex = currentPage * itemsPerPage;
   const firstIndex = lastIndex - itemsPerPage;
-  const currentData = data.slice(firstIndex, lastIndex);
-  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+  const currentData = filteredData.slice(firstIndex, lastIndex);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const normalizedPage = Math.min(Math.max(currentPage, 1), totalPages);
+  // // Handle edge cases
+  // if (totalPages <= 0) {
+  //   return <div>No data to display</div>;
+  // }
 
   return (
     <Container
-      className="shadow-lg pb-12 pl-4 pr-4"
+      className="shadow-lg pb-12 pl-4 pr-4 "
       style={{
         borderRadius: "50px",
         borderWidth: "100",
@@ -273,13 +314,23 @@ function DataList() {
               Remove All Filters
             </button>
           </Form.Group>
-          <Form.Group controlId="search">
-            <Form.Label>Search:</Form.Label>
-            <Form.Control
-              type="text"
-              value={searchTerm}
-              onChange={handleSearch}
-            />
+          <Form.Group controlId="search" className="mt-4">
+            <div className="d-flex align-items-center">
+              <Form.Label className="pt-2 pr-4">Search:</Form.Label>
+              <Form.Control
+                type="text"
+                value={searchTerm}
+                onChange={handleSearch}
+              />
+              {searchTerm && (
+                <button
+                  className="btn btn-secondary ml-2"
+                  onClick={() => setSearchTerm("")}
+                >
+                  Clear
+                </button>
+              )}
+            </div>
           </Form.Group>
         </div>
       </Container>
@@ -294,7 +345,7 @@ function DataList() {
           </tr>
         </thead>
         <tbody>
-          {filteredData.map((row) => (
+          {currentData.map((row) => (
             <tr key={row.id}>
               {Object.keys(row)
                 .filter((key) => key !== "id")
@@ -396,16 +447,34 @@ function DataList() {
         </tbody>
       </Table>
       <Pagination className="justify-content-center">
-  {Array.from({ length: totalPages }, (_, index) => (
-    <Pagination.Item
-      key={index + 1}
-      active={index + 1 === currentPage}
-      onClick={() => paginate(index + 1)}
-    >
-      {index + 1}
-    </Pagination.Item>
-  ))}
-</Pagination>
+        {Array.from({ length: totalPages }, (_, index) => (
+          <Pagination.Item
+            key={index + 1}
+            active={index + 1 === normalizedPage}
+            onClick={() => paginate(index + 1)}
+          >
+            {index + 1}
+          </Pagination.Item>
+        ))}
+      </Pagination>
+      {/* Modal */}
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Missing Data</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Please input all required data before adding a new record.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={handleClose}
+            className="close-button"
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }

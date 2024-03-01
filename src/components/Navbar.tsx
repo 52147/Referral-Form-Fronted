@@ -19,7 +19,7 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center">
           {/* Logo and title */}
-          <Link href="/" passHref>
+          <Link href="https://www.upwomxn.org/" passHref>
             <div className="flex items-center">
               {" "}
               {/* Flex container for horizontal alignment */}
