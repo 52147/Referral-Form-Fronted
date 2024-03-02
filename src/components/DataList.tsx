@@ -389,7 +389,7 @@ function DataList() {
             <th>Current Position/Title</th>
             <th>Position you can provide referral</th>
             <th>Candidate Visa Requirements</th>
-            <th>Candidate's Work Authorization</th>
+            <th>Candidate&apos;s Work Authorization</th>
             <th>Additional Information Required</th>
             <th>Expected Time to Respond</th>
             <th>Date Added</th>
