@@ -128,7 +128,9 @@ function DataList() {
     console.log(sorted);
     setData(sorted);
   };
-
+  useEffect(() => {
+    handleSort();
+  }, [handleSort]); // Add handleSort to the dependency array
   const handleEdit = (id: any) => {
     setEditRowId(id);
   };
