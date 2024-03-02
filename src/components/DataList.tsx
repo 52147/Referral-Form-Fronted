@@ -47,8 +47,8 @@ function DataList() {
     companyName: "",
     currentPositionTitle: "",
     positionYouCanProvideReferral: "",
+    provideSponorship: "",
     candidateVisaRequirements: "",
-    candidateWorkAuthorization: "",
     additionalInformationRequired: "",
     expectedTimeToRespond: "",
     dateAdded: "",
@@ -81,9 +81,6 @@ function DataList() {
   useEffect(() => {
     // applySearchFilter();
   }, [searchTerm]); // Update filtered data when data or search term changes
-
-
-  
 
   const fetchData = () => {
     axios
@@ -132,16 +129,24 @@ function DataList() {
     const handleSort = () => {
       const sorted = [...data];
       if (dateFilter === "asc") {
-        sorted.sort((a, b) => new Date(a["Date Added"]).getTime() - new Date(b["Date Added"]).getTime());
+        sorted.sort(
+          (a, b) =>
+            new Date(a["Date Added"]).getTime() -
+            new Date(b["Date Added"]).getTime()
+        );
       } else if (dateFilter === "desc") {
-        sorted.sort((a, b) => new Date(b["Date Added"]).getTime() - new Date(a["Date Added"]).getTime());
+        sorted.sort(
+          (a, b) =>
+            new Date(b["Date Added"]).getTime() -
+            new Date(a["Date Added"]).getTime()
+        );
       }
       setData(sorted);
     };
-  
+
     handleSort();
   }, [dateFilter]); // Assuming dateFilter is the only dependency that should trigger re-sorting
-  
+
   const handleEdit = (id: any) => {
     setEditRowId(id);
   };
@@ -217,7 +222,7 @@ function DataList() {
         currentPositionTitle: "",
         positionYouCanProvideReferral: "",
         candidateVisaRequirements: "",
-        candidateWorkAuthorization: "",
+        provideSponorship: "",
         additionalInformationRequired: "",
         expectedTimeToRespond: "",
         dateAdded: "",
@@ -399,8 +404,8 @@ function DataList() {
             <th>Company Name</th>
             <th>Current Position/Title</th>
             <th>Position you can provide referral</th>
+            <th>Provide Sponorship</th>
             <th>Candidate Visa Requirements</th>
-            <th>Candidate&apos;s Work Authorization</th>
             <th>Additional Information Required</th>
             <th>Expected Time to Respond</th>
             <th>Date Added</th>
@@ -527,19 +532,19 @@ function DataList() {
             <td>
               <Form.Control
                 type="text"
-                name="candidateVisaRequirements"
-                placeholder="Candidate Visa Requirements"
+                name="provideSponorship"
+                placeholder="Provide Sponorship"
                 onChange={handleNewRecordChange}
-                value={newRecord.candidateVisaRequirements}
+                value={newRecord.provideSponorship}
               />
             </td>
             <td>
               <Form.Control
                 type="text"
-                name="candidateWorkAuthorization"
-                placeholder="Candidate's Work Authorization"
+                name="candidateVisaRequirements"
+                placeholder="Candidate Visa Requirements"
                 onChange={handleNewRecordChange}
-                value={newRecord.candidateWorkAuthorization}
+                value={newRecord.candidateVisaRequirements}
               />
             </td>
             <td>

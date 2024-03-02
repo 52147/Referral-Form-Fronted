@@ -45,9 +45,10 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Features
 
-- **Referral Submission Form**: A streamlined form for users to submit new referrals.
-- **Referral Management**: Functionalities to view, sort, and update the status of referrals.
-- **Responsive Design**: A mobile-first approach ensures the application is fully responsive and accessible on various devices.
+- **Dynamic Referral Submission**: Users can submit referrals by filling out a comprehensive form that captures all necessary details.
+- **Efficient Referral Management**: Easily view, sort, and update the status of referrals through an intuitive interface.
+- **Responsive Design**: The application is fully responsive, providing an optimal experience across all devices.
+- **SEO Optimized**: Leveraging Next.js's server-side rendering for improved SEO performance.
 
 ## Built With
 
