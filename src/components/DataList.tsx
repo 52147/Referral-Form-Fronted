@@ -133,7 +133,7 @@ function DataList() {
     setEditRowId(id);
   };
 
-  const handleRowChange = (e, id) => {
+  const handleRowChange = (e: any, id: number) => {
     const { name, value } = e.target;
     const newData = data.map((row) => {
       if (row.id === id) {
