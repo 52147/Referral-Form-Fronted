@@ -4,3 +4,19 @@
   text-decoration: none;
   color: #ffffff !important;
 }
+
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column; /* Stack buttons vertically on small screens */
+  }
+
+  .filters button {
+    width: 100%; /* Full width buttons on small screens */
+    margin-bottom: 10px; /* Space between stacked buttons */
+  }
+
+  .filters Form.Label, .filters Form.Control {
+    width: 100%; /* Full width for form elements */
+    margin-bottom: 10px; /* Space between form elements */
+  }
+}
