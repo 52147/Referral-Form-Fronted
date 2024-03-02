@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -36,12 +36,14 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Hamburger Menu */}
-          <div className="menu-icon" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            <div className="bar"></div>
-            <div className="bar"></div>
-            <div className="bar"></div>
-          </div>
+          {/* Conditionally render the Hamburger Menu based on isMenuOpen */}
+          {!isMenuOpen && (
+            <div className="menu-icon" onClick={() => setIsMenuOpen(true)}>
+              <div className="bar"></div>
+              <div className="bar"></div>
+              <div className="bar"></div>
+            </div>
+          )}
 
           {/* Menu items */}
           <div
@@ -49,33 +51,45 @@ export default function Navbar() {
               isMenuOpen ? "" : "hidden"
             } sm:flex`}
           >
-            <Link href="https://www.upwomxn.org/" className="pr-4">
+            <Link
+              href="https://www.upwomxn.org/"
+              className={`${isMenuOpen === false ? "block" : "hidden"} pr-4`}
+            >
               Home
             </Link>
-            <Link href="https://www.upwomxn.org/about/" className="pr-4">
+            <Link
+              href="https://www.upwomxn.org/about/"
+              className={`${isMenuOpen === false ? "block" : "hidden"} pr-4`}
+            >
               About
             </Link>
-            <Link href="https://www.upwomxn.org/people/" className="pr-4">
+            <Link
+              href="https://www.upwomxn.org/people/"
+              className={`${isMenuOpen === false ? "block" : "hidden"} pr-4`}
+            >
               People
             </Link>
             <Link
               href="https://www.upwomxn.org/united-proud-women-library/"
-              className="pr-4"
+              className={`${isMenuOpen === false ? "block" : "hidden"} pr-4`}
             >
               Library / Readings
             </Link>
             <Link
               href="https://www.upwomxn.org/theater-review/"
-              className="pr-4"
+              className={`${isMenuOpen === false ? "block" : "hidden"} pr-4`}
             >
               Theatre Review
             </Link>
-            <Link href="https://www.upwomxn.org/connect/" className="pr-4">
+            <Link
+              href="https://www.upwomxn.org/connect/"
+              className={`${isMenuOpen === false ? "block" : "hidden"} pr-4`}
+            >
               Connect
             </Link>
             <Link
               href="https://referral-form-fronted.vercel.app/referral"
-              className="pr-4"
+              className={`${isMenuOpen === false ? "Referral" : "hidden"} pr-4`}
             >
               Referral
             </Link>
