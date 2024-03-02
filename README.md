@@ -76,7 +76,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-- **Your Name** - *Initial Work* - [Shoutzu Han](https://github.com/52147)
+- **Debra** - *Initial Work* - [Shoutzu Han](https://github.com/52147)
 
 ## License
 
