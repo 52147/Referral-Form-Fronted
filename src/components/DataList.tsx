@@ -25,11 +25,11 @@ interface RecordType {
 function DataList() {
   const [data, setData] = useState<DataRow[]>([]);
   const [editRowId, setEditRowId] = useState(null);
-  const [newRecord, setNewRecord] = useState<RecordType>({
-    id: -1,
-    Name: "",
-    status: "Active",
-  });
+  // const [newRecord, setNewRecord] = useState<RecordType>({
+  //   id: -1,
+  //   Name: "",
+  //   status: "Active",
+  // });
   const [dateFilter, setDateFilter] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -40,6 +40,28 @@ function DataList() {
   const [activeFilter, setActiveFilter] = useState("");
   const [activeOrder, setActiveOrder] = useState("ascending"); // To track the active order
   const [show, setShow] = useState(false);
+  const initialFormState = {
+    name: "",
+    phoneNumber: "",
+    emailAddress: "",
+    companyName: "",
+    currentPositionTitle: "",
+    positionYouCanProvideReferral: "",
+    candidateVisaRequirements: "",
+    candidateWorkAuthorization: "",
+    additionalInformationRequired: "",
+    expectedTimeToRespond: "",
+    dateAdded: "",
+    referralsStatus: "", // Keep only if this field is required
+    // Do not include 'status' or 'Name' if they are not required
+  };
+
+  // Initialize your newRecord state with the initialFormState
+  const [newRecord, setNewRecord] = useState(initialFormState);
+  useEffect(() => {
+    console.log("New record state updated:", newRecord);
+  }, [newRecord]);
+
   // Function to toggle the modal
   const handleClose = () => setShow(false);
 
@@ -111,11 +133,15 @@ function DataList() {
     setEditRowId(id);
   };
 
-  const handleRowChange = (e: any, id: any) => {
+  const handleRowChange = (e, id) => {
     const { name, value } = e.target;
-    setData(
-      data.map((row) => (row.id === id ? { ...row, [name]: value } : row))
-    );
+    const newData = data.map((row) => {
+      if (row.id === id) {
+        return { ...row, [name]: value };
+      }
+      return row;
+    });
+    setData(newData); // Update the data state with the modified row
   };
 
   const handleDelete = (range: any) => {
@@ -163,19 +189,33 @@ function DataList() {
   };
 
   const handleAddNewRecord = () => {
-    console.log(newRecord)
+    console.log(newRecord);
     // Check if all necessary data is input
     if (Object.values(newRecord).some((value) => value === "")) {
       // If not all data is input, show modal
       setShow(true); // show warning modal
     } else {
       const values = Object.values(newRecord);
-      
+      const initialValues = {
+        name: "",
+        phoneNumber: "",
+        emailAddress: "",
+        companyName: "",
+        currentPositionTitle: "",
+        positionYouCanProvideReferral: "",
+        candidateVisaRequirements: "",
+        candidateWorkAuthorization: "",
+        additionalInformationRequired: "",
+        expectedTimeToRespond: "",
+        dateAdded: "",
+        referralsStatus: "",
+      };
       axios
         .post("https://pear-cocoon-hose.cyclic.app/add-row", { values })
         .then(() => {
           alert("New record added successfully");
-          setNewRecord({}); // Reset new record form
+          setNewRecord(initialValues); // Reset new record form to initial values
+
           fetchData(); // Refresh the data list
         })
         .catch((error) => {
@@ -339,13 +379,23 @@ function DataList() {
       <Table responsive="sm" bordered hover>
         <thead>
           <tr>
-            {data[0] &&
-              Object.keys(data[0])
-                .filter((key) => key !== "id")
-                .map((header) => <th key={header}>{header}</th>)}
+            {/* Assuming these are your headers based on the fields provided */}
+            <th>Name</th>
+            <th>Phone Number</th>
+            <th>Email Address</th>
+            <th>Company Name</th>
+            <th>Current Position/Title</th>
+            <th>Position you can provide referral</th>
+            <th>Candidate Visa Requirements</th>
+            <th>Candidate's Work Authorization</th>
+            <th>Additional Information Required</th>
+            <th>Expected Time to Respond</th>
+            <th>Date Added</th>
+            <th>Referrals Status</th>
             <th>Actions</th>
           </tr>
         </thead>
+
         <tbody>
           {currentData.map((row) => (
             <tr key={row.id}>
@@ -353,89 +403,171 @@ function DataList() {
                 .filter((key) => key !== "id")
                 .map((key) => (
                   <td key={key}>
-                    {editRowId === row.id && key === "Referrals Status" ? (
-                      <Form.Control
-                        as="select"
-                        name={key}
-                        value={row[key]}
-                        onChange={(e) => handleRowChange(e, row.id)}
-                      >
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                      </Form.Control>
-                    ) : editRowId === row.id ? (
-                      <Form.Control
-                        type="text"
-                        name={key}
-                        value={row[key]}
-                        onChange={(e) => handleRowChange(e, row.id)}
-                      />
+                    {editRowId === row.id ? (
+                      key === "Referrals Status" ? (
+                        // This field remains a dropdown in edit mode
+                        <Form.Control
+                          as="select"
+                          name={key}
+                          value={row[key]}
+                          onChange={(e) => handleRowChange(e, row.id)}
+                        >
+                          <option value="Active">Active</option>
+                          <option value="Inactive">Inactive</option>
+                        </Form.Control>
+                      ) : (
+                        // Other fields become text inputs in edit mode
+                        <Form.Control
+                          type="text"
+                          name={key}
+                          value={row[key]}
+                          onChange={(e) => handleRowChange(e, row.id)}
+                        />
+                      )
+                    ) : key === "Referrals Status" ? (
+                      // Display the text value of the dropdown when not in edit mode
+                      row[key]
                     ) : (
+                      // Display the text value for other fields
                       row[key]
                     )}
                   </td>
                 ))}
-
               <td>
                 {editRowId === row.id ? (
                   <button
-                    style={{ background: "#fa7f5c" }}
                     className="text-white font-bold py-2 px-4 rounded"
                     onClick={() => handleSave(row.id)}
+                    style={{ background: "#fa7f5c" }}
                   >
                     Save
                   </button>
                 ) : (
-                  <>
-                    <button
-                      style={{ background: "#ff9c80" }}
-                      className="text-white font-bold py-2 px-4 rounded"
-                      onClick={() => handleEdit(row.id)}
-                    >
-                      Edit
-                    </button>
-                    {/* <Button
-                      variant="danger"
-                      onClick={() =>
-                        handleDelete(`Sheet1!A${row.id + 2}:L${row.id + 2}`)
-                      }
-                    >
-                      Delete
-                    </Button> */}
-                  </>
+                  <button
+                    className="text-white font-bold py-2 px-4 rounded"
+                    onClick={() => handleEdit(row.id)}
+                    style={{ background: "#ff9c80" }}
+                  >
+                    Edit
+                  </button>
                 )}
               </td>
             </tr>
           ))}
-          <tr>
-            {data[0] &&
-              Object.keys(data[0])
-                .filter((key) => key !== "id")
-                .map((header) => (
-                  <td key={header + "-new"}>
-                    {header === "Referrals Status" ? (
-                      <Form.Control
-                        as="select"
-                        name={header}
-                        value={newRecord[header] || ""}
-                        onChange={handleNewRecordChange}
-                      >
-                        <option value="">Select Status</option>{" "}
-                        {/* Provide a default "select" option */}
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                      </Form.Control>
-                    ) : (
-                      <Form.Control
-                        type="text"
-                        name={header}
-                        value={newRecord[header] || ""}
-                        onChange={handleNewRecordChange}
-                      />
-                    )}
-                  </td>
-                ))}
 
+          {/* Row for adding a new record */}
+          <tr>
+            <td>
+              <Form.Control
+                type="text"
+                name="name"
+                placeholder="Name"
+                onChange={handleNewRecordChange}
+                value={newRecord.name}
+              />
+            </td>
+            <td>
+              <Form.Control
+                type="tel"
+                name="phoneNumber"
+                placeholder="Phone Number"
+                onChange={handleNewRecordChange}
+                value={newRecord.phoneNumber}
+              />
+            </td>
+            <td>
+              <Form.Control
+                type="email"
+                name="emailAddress"
+                placeholder="Email Address"
+                onChange={handleNewRecordChange}
+                value={newRecord.emailAddress}
+              />
+            </td>
+            <td>
+              <Form.Control
+                type="text"
+                name="companyName"
+                placeholder="Company Name"
+                onChange={handleNewRecordChange}
+                value={newRecord.companyName}
+              />
+            </td>
+            <td>
+              <Form.Control
+                type="text"
+                name="currentPositionTitle"
+                placeholder="Current Position/Title"
+                onChange={handleNewRecordChange}
+                value={newRecord.currentPositionTitle}
+              />
+            </td>
+            <td>
+              <Form.Control
+                type="text"
+                name="positionYouCanProvideReferral"
+                placeholder="Position You Can Provide Referral"
+                onChange={handleNewRecordChange}
+                value={newRecord.positionYouCanProvideReferral}
+              />
+            </td>
+            <td>
+              <Form.Control
+                type="text"
+                name="candidateVisaRequirements"
+                placeholder="Candidate Visa Requirements"
+                onChange={handleNewRecordChange}
+                value={newRecord.candidateVisaRequirements}
+              />
+            </td>
+            <td>
+              <Form.Control
+                type="text"
+                name="candidateWorkAuthorization"
+                placeholder="Candidate's Work Authorization"
+                onChange={handleNewRecordChange}
+                value={newRecord.candidateWorkAuthorization}
+              />
+            </td>
+            <td>
+              <Form.Control
+                type="text"
+                name="additionalInformationRequired"
+                placeholder="Additional Information Required"
+                onChange={handleNewRecordChange}
+                value={newRecord.additionalInformationRequired}
+              />
+            </td>
+            <td>
+              <Form.Control
+                type="text"
+                name="expectedTimeToRespond"
+                placeholder="Expected Time to Respond"
+                onChange={handleNewRecordChange}
+                value={newRecord.expectedTimeToRespond}
+              />
+            </td>
+            <td>
+              <Form.Control
+                type="date"
+                name="dateAdded"
+                placeholder="Date Added"
+                onChange={handleNewRecordChange}
+                value={newRecord.dateAdded}
+              />
+            </td>
+            <td>
+              <Form.Control
+                as="select"
+                name="referralsStatus"
+                onChange={handleNewRecordChange}
+                value={newRecord.referralsStatus}
+              >
+                <option value="">Select Status</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </Form.Control>
+            </td>
             <td>
               <button
                 className="hover:bg-pink-700 text-white font-bold py-2 px-4 rounded"
@@ -448,6 +580,7 @@ function DataList() {
           </tr>
         </tbody>
       </Table>
+
       <Pagination className="justify-content-center">
         {Array.from({ length: totalPages }, (_, index) => (
           <Pagination.Item
