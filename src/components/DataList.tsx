@@ -304,7 +304,7 @@ function DataList() {
         borderRadius: "50px",
         borderWidth: "100",
         borderStyle: "none",
-        width: "3000px",
+        maxWidth: "95%", // Set the maxWidth to 100% or another value that fits your design
       }}
     >
       <Container className="mb-12 " style={{ marginTop: 10 }}>
