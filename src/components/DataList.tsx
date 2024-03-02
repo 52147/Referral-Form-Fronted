@@ -80,11 +80,10 @@ function DataList() {
 
   useEffect(() => {
     // applySearchFilter();
-  }, [data, searchTerm]); // Update filtered data when data or search term changes
+  }, [searchTerm]); // Update filtered data when data or search term changes
 
-  useEffect(() => {
-    handleSort();
-  }, [dateFilter]);
+
+  
 
   const fetchData = () => {
     axios
@@ -110,27 +109,39 @@ function DataList() {
     fetchData();
   }, []); // The empty array ensures this effect runs once after the initial render
 
-  const handleSort = () => {
-    const sorted = [...data];
-    if (dateFilter === "asc") {
-      sorted.sort(
-        (a, b) =>
-          new Date(a["Date Added"]).getTime() -
-          new Date(b["Date Added"]).getTime()
-      );
-    } else if (dateFilter === "desc") {
-      sorted.sort(
-        (a, b) =>
-          new Date(b["Date Added"]).getTime() -
-          new Date(a["Date Added"]).getTime()
-      );
-    }
-    console.log(sorted);
-    setData(sorted);
-  };
+  // const handleSort = () => {
+  //   const sorted = [...data];
+  //   if (dateFilter === "asc") {
+  //     sorted.sort(
+  //       (a, b) =>
+  //         new Date(a["Date Added"]).getTime() -
+  //         new Date(b["Date Added"]).getTime()
+  //     );
+  //   } else if (dateFilter === "desc") {
+  //     sorted.sort(
+  //       (a, b) =>
+  //         new Date(b["Date Added"]).getTime() -
+  //         new Date(a["Date Added"]).getTime()
+  //     );
+  //   }
+  //   setData(sorted);
+  // };
   useEffect(() => {
+    // This function is now defined inside useEffect to ensure it has access to the latest state
+    // and does not need to be included in the dependency array.
+    const handleSort = () => {
+      const sorted = [...data];
+      if (dateFilter === "asc") {
+        sorted.sort((a, b) => new Date(a["Date Added"]).getTime() - new Date(b["Date Added"]).getTime());
+      } else if (dateFilter === "desc") {
+        sorted.sort((a, b) => new Date(b["Date Added"]).getTime() - new Date(a["Date Added"]).getTime());
+      }
+      setData(sorted);
+    };
+  
     handleSort();
-  }, [handleSort]); // Add handleSort to the dependency array
+  }, [dateFilter]); // Assuming dateFilter is the only dependency that should trigger re-sorting
+  
   const handleEdit = (id: any) => {
     setEditRowId(id);
   };
