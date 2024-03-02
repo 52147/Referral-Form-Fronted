@@ -47,7 +47,7 @@ function DataList() {
     companyName: "",
     currentPositionTitle: "",
     positionYouCanProvideReferral: "",
-    provideSponorship: "",
+    provideSponsorship: "",
     candidateVisaRequirements: "",
     additionalInformationRequired: "",
     expectedTimeToRespond: "",
@@ -200,6 +200,11 @@ function DataList() {
       console.error("Updated row not found");
     }
   };
+  const handleCancelEdit = () => {
+    setEditRowId(null); // Exit edit mode
+    // Optionally, revert any unsaved changes to the data here
+  };
+
   const handleNewRecordChange = (e: ChangeEvent<any>) => {
     const name = e.target.name;
     const value = e.target.value;
@@ -222,7 +227,7 @@ function DataList() {
         currentPositionTitle: "",
         positionYouCanProvideReferral: "",
         candidateVisaRequirements: "",
-        provideSponorship: "",
+        provideSponsorship: "",
         additionalInformationRequired: "",
         expectedTimeToRespond: "",
         dateAdded: "",
@@ -248,7 +253,7 @@ function DataList() {
   };
 
   const handleSearch = (e: any) => {
-    const keyword = e.target.value.toLowerCase(); // Get the keyword entered by the user and convert it to lowercase
+    const keyword = e.target.value.trim().toLowerCase(); // Remove whitespace and convert to lowercase
     setSearchTerm(keyword); // Update the search term state
     // Update the search query state based on the keyword
     setSearchQuery(keyword);
@@ -257,7 +262,10 @@ function DataList() {
   // Filtering and sorting logic
   const filteredData = data
     .filter(
-      (item) => filter === "all" || item["Current Position/Title"] === filter
+      (item) =>
+        filter === "all" ||
+        item["Current Position/Title"] === filter ||
+        item["Provide Sponsorship"] === filter
     )
     .filter((item) =>
       Object.values(item).some(
@@ -362,6 +370,16 @@ function DataList() {
             >
               Software Engineer
             </button>
+            <button
+              onClick={() => handleFilterChange("Green Card")}
+              className={`px-4 py-2 rounded-md transition-colors duration-200 mr-4 ${
+                activeFilter === "Green Card"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 hover:bg-gray-300"
+              }`}
+            >
+              Green Card
+            </button>
             {/* Button to remove all filters */}
             <button
               className={`px-4 py-2 rounded-md transition-colors duration-200 ${
@@ -404,7 +422,7 @@ function DataList() {
             <th>Company Name</th>
             <th>Current Position/Title</th>
             <th>Position you can provide referral</th>
-            <th>Provide Sponorship</th>
+            <th>Provide Sponsorship</th>
             <th>Candidate Visa Requirements</th>
             <th>Additional Information Required</th>
             <th>Expected Time to Respond</th>
@@ -451,15 +469,24 @@ function DataList() {
                     )}
                   </td>
                 ))}
-              <td>
+              <td style={{ display: "flex", gap: "8px" }}>
                 {editRowId === row.id ? (
-                  <button
-                    className="text-white font-bold py-2 px-4 rounded"
-                    onClick={() => handleSave(row.id)}
-                    style={{ background: "#fa7f5c" }}
-                  >
-                    Save
-                  </button>
+                  <>
+                    <button
+                      className="text-white font-bold py-2 px-4 rounded"
+                      onClick={() => handleSave(row.id)}
+                      style={{ background: "#fa7f5c" }}
+                    >
+                      Save
+                    </button>
+                    <button
+                      className="text-white font-bold py-2 px-4 rounded"
+                      onClick={handleCancelEdit}
+                      style={{ background: "#6c757d" }} // Using a different background color for the cancel button
+                    >
+                      Cancel
+                    </button>
+                  </>
                 ) : (
                   <button
                     className="text-white font-bold py-2 px-4 rounded"
@@ -535,7 +562,7 @@ function DataList() {
                 name="provideSponorship"
                 placeholder="Provide Sponorship"
                 onChange={handleNewRecordChange}
-                value={newRecord.provideSponorship}
+                value={newRecord.provideSponsorship}
               />
             </td>
             <td>
