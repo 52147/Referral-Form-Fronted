@@ -20,3 +20,45 @@
     margin-bottom: 10px; /* Space between form elements */
   }
 }
+/* Override hover/focus/active states for btn-secondary and btn-primary when using .no-hover */
+.btn-secondary.no-hover,
+.btn-secondary.no-hover:hover,
+.btn-secondary.no-hover:focus,
+.btn-secondary.no-hover:active,
+.btn-secondary.no-hover.active,
+.show > .btn-secondary.no-hover.dropdown-toggle,
+.btn-primary.no-hover,
+.btn-primary.no-hover:hover,
+.btn-primary.no-hover:focus,
+.btn-primary.no-hover:active,
+.btn-primary.no-hover.active,
+.show > .btn-primary.no-hover.dropdown-toggle {
+  background-color: #6c757d !important; /* Secondary default color */
+  border-color:    #6c757d !important;
+  color:           #fff    !important;
+  box-shadow:      none    !important;
+  opacity:         1       !important;
+}
+
+/* Remove transition for no-hover buttons */
+.btn-secondary.no-hover,
+.btn-primary.no-hover {
+  transition: none !important;
+}
+.custom-btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: #ecb1d1;
+  border: none;
+  border-radius: 0.25rem;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: none;    
+  box-shadow: none;  
+}
+
+.custom-btn:hover{
+  background-color: #d99ac0; 
+  color: #fff; 
+}

@@ -1,46 +1,57 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
 import axios from "axios";
+import Select, { MultiValue } from "react-select";
 import {
   Form,
   Container,
   Table,
   Pagination,
   Modal,
-  Button,
+  Collapse,
+  Card,
+  Row,
+  Col,
+  Toast,
+  ToastContainer,
 } from "react-bootstrap";
 import "./DataList.css";
 
-// Define an interface for the structure of a row in your data
 interface DataRow {
   id: number;
-  // Add other fields according to your data structure
-  [key: string]: any; // Use this if your data structure includes dynamic keys
+  [key: string]: any;
 }
+
+interface OptionType {
+  value: string;
+  label: string;
+}
+
 interface RecordType {
-  id?: number;
-  // other fields, all optional
-  [key: string]: any; // or more specific types if applicable
+  name: string;
+  phoneNumber: string;
+  emailAddress: string;
+  companyName: string;
+  currentPositionTitle: string;
+  positionYouCanProvideReferral: string;
+  provideSponsorship: string;
+  candidateVisaRequirements: string;
+  additionalInformationRequired: string;
+  expectedTimeToRespond: string;
+  dateAdded: string;
+  referralsStatus: string;
 }
 
 function DataList() {
+  // 数据列表
   const [data, setData] = useState<DataRow[]>([]);
-  const [editRowId, setEditRowId] = useState(null);
-  // const [newRecord, setNewRecord] = useState<RecordType>({
-  //   id: -1,
-  //   Name: "",
-  //   status: "Active",
-  // });
-  const [dateFilter, setDateFilter] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
-  const [filter, setFilter] = useState("all");
-  const [order, setOrder] = useState("ascending");
-  const [activeFilter, setActiveFilter] = useState("");
-  const [activeOrder, setActiveOrder] = useState("ascending"); // To track the active order
-  const [show, setShow] = useState(false);
-  const initialFormState = {
+  // 新增弹窗显隐
+  const [showModal, setShowModal] = useState(false);
+  // Toast 控制
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+
+  // 新纪录模板
+  const initialNew: RecordType = {
     name: "",
     phoneNumber: "",
     emailAddress: "",
@@ -52,607 +63,353 @@ function DataList() {
     additionalInformationRequired: "",
     expectedTimeToRespond: "",
     dateAdded: "",
-    referralsStatus: "", // Keep only if this field is required
-    // Do not include 'status' or 'Name' if they are not required
+    referralsStatus: "Active",
   };
+  const [newRecord, setNewRecord] = useState<RecordType>(initialNew);
 
-  // Initialize your newRecord state with the initialFormState
-  const [newRecord, setNewRecord] = useState(initialFormState);
-  useEffect(() => {
-    console.log("New record state updated:", newRecord);
-  }, [newRecord]);
+  // 过滤/搜索/分页
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedSponsorship, setSelectedSponsorship] = useState<
+    MultiValue<OptionType>
+  >([]);
+  const [selectedVisaReq, setSelectedVisaReq] = useState<
+    MultiValue<OptionType>
+  >([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  // Function to toggle the modal
-  const handleClose = () => setShow(false);
+  // 响应式展开
+  const [isMobile, setIsMobile] = useState(false);
+  const [openRow, setOpenRow] = useState<number | null>(null);
 
-  const handleOrderChange = (newOrder: string) => {
-    setOrder(newOrder);
-    setActiveOrder(newOrder); // Update the active order state
-  };
+  // 多选选项
+  const sponsorshipOptions: OptionType[] = [
+    { value: "h1b", label: "H-1B" },
+    { value: "opt", label: "OPT" },
+    { value: "greencard", label: "Green Card" },
+    { value: "f1", label: "F1" },
+  ];
+  const visaOptions: OptionType[] = [
+    { value: "opt", label: "OPT" },
+    { value: "h1b", label: "H-1B" },
+    { value: "greencard", label: "Green Card" },
+    { value: "cpt", label: "CPT" },
+    { value: "j1", label: "J-1" },
+    { value: "c9", label: "C-9" },
+    { value: "f1", label: "F-1" },
+    { value: "h4", label: "H-4" },
+    { value: "l1", label: "L-1" },
+  ];
 
-  const handleFilterChange = (newFilter: string) => {
-    setFilter(newFilter);
-    setActiveFilter(newFilter); // Update the active filter state
-  };
-  useEffect(() => {
-    fetchData();
-  }, []); // The empty array ensures this effect runs once after the initial render
+  // 表头列
+  const primaryCols = [
+    "Name",
+    "Phone Number",
+    "Date Added",
+    "Referrals Status",
+  ];
+  const secondaryCols = [
+    "Email Address",
+    "Company Name",
+    "Current Position/Title",
+    "Position you can provide referral",
+    "Provide Sponsorship",
+    "Candidate's Visa Requirements",
+    "Additional Information Required",
+    "Expected Time to Respond",
+  ];
 
-  useEffect(() => {
-    // applySearchFilter();
-  }, [searchTerm]); // Update filtered data when data or search term changes
-
+  // 获取后端数据
   const fetchData = () => {
     axios
-      .get(`https://pear-cocoon-hose.cyclic.app/data`)
+      .get("https://referral-form-backend.onrender.com/data")
       .then((response) => {
-        // Assuming the response data is an array of arrays
-        const headers = response.data[0] as string[]; // The first row is headers
-        const rows = response.data.slice(1) as any[][]; // The rest are data rows
-
-        const formattedData: DataRow[] = rows.map((row, index) => {
-          const obj: DataRow = { id: index }; // Initialize with id
-          headers.forEach((header, idx) => {
-            obj[header] = row[idx];
-          });
+        const headers = response.data[0] as string[];
+        const rows = response.data.slice(1) as any[][];
+        const formatted = rows.map((row, idx) => {
+          const obj: DataRow = { id: idx };
+          headers.forEach((h, i) => (obj[h] = row[i]));
           return obj;
         });
-
-        setData(formattedData);
+        setData(formatted);
       })
-      .catch((error) => console.error("Error fetching data: ", error));
+      .catch(console.error);
   };
+  useEffect(fetchData, []);
+
+  // 响应式监听
   useEffect(() => {
-    fetchData();
-  }, []); // The empty array ensures this effect runs once after the initial render
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", onResize);
+    onResize();
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
-  // const handleSort = () => {
-  //   const sorted = [...data];
-  //   if (dateFilter === "asc") {
-  //     sorted.sort(
-  //       (a, b) =>
-  //         new Date(a["Date Added"]).getTime() -
-  //         new Date(b["Date Added"]).getTime()
-  //     );
-  //   } else if (dateFilter === "desc") {
-  //     sorted.sort(
-  //       (a, b) =>
-  //         new Date(b["Date Added"]).getTime() -
-  //         new Date(a["Date Added"]).getTime()
-  //     );
-  //   }
-  //   setData(sorted);
-  // };
-  useEffect(() => {
-    // This function is now defined inside useEffect to ensure it has access to the latest state
-    // and does not need to be included in the dependency array.
-    const handleSort = () => {
-      const sorted = [...data];
-      if (dateFilter === "asc") {
-        sorted.sort(
-          (a, b) =>
-            new Date(a["Date Added"]).getTime() -
-            new Date(b["Date Added"]).getTime()
-        );
-      } else if (dateFilter === "desc") {
-        sorted.sort(
-          (a, b) =>
-            new Date(b["Date Added"]).getTime() -
-            new Date(a["Date Added"]).getTime()
-        );
-      }
-      setData(sorted);
-    };
+  // 辅助：归一化文本（无视空格/符号/大小写）
+  const normalize = (s = "") => s.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-    handleSort();
-  }, [dateFilter]); // Assuming dateFilter is the only dependency that should trigger re-sorting
+  // 过滤逻辑
+  const filtered = data.filter((row) => {
+    // 全局搜索
+    if (searchTerm) {
+      const allText = Object.values(row).join(" ").toLowerCase();
+      if (!allText.includes(searchTerm)) return false;
+    }
+    // Sponsorship 多选
+    if (selectedSponsorship.length) {
+      const fieldVal = normalize(row["Provide Sponsorship"]);
+      if (!selectedSponsorship.every((opt) => fieldVal.includes(opt.value)))
+        return false;
+    }
+    // Visa Requirements 多选
+    if (selectedVisaReq.length) {
+      const fieldVal = normalize(row["Candidate's Visa Requirements"]);
+      if (!selectedVisaReq.every((opt) => fieldVal.includes(opt.value)))
+        return false;
+    }
+    return true;
+  });
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const currentData = filtered.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
-  const handleEdit = (id: any) => {
-    setEditRowId(id);
+  // 处理各类交互
+  const handleSearchChange = (e: ChangeEvent<any>) =>
+    setSearchTerm(e.target.value.trim().toLowerCase());
+  const handleNewChange = (e: ChangeEvent<any>) =>
+    setNewRecord((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleToggle = (idx: number) =>
+    setOpenRow(openRow === idx ? null : idx);
+
+  // 清除所有过滤器
+  const handleClearFilters = () => {
+    setSearchTerm("");
+    setSelectedSponsorship([]);
+    setSelectedVisaReq([]);
+    setCurrentPage(1);
   };
 
-  const handleRowChange = (e: any, id: number) => {
-    const { name, value } = e.target;
-    const newData = data.map((row) => {
-      if (row.id === id) {
-        return { ...row, [name]: value };
-      }
-      return row;
-    });
-    setData(newData); // Update the data state with the modified row
-  };
-
-  const handleDelete = (range: any) => {
+  // 添加新纪录
+  const handleAdd = () => {
+    // 检查必填
+    const missing = Object.entries(newRecord).filter(
+      ([k, v]) => k !== "referralsStatus" && v === ""
+    );
+    if (missing.length) {
+      setShowError(true);
+      return;
+    }
     axios
-      .post("https://pear-cocoon-hose.cyclic.app/clear-values", { range })
-      .then(() => {
-        alert("Row deleted successfully");
-        fetchData(); // Refresh the data list
+      .post("https://referral-form-backend.onrender.com/add-row", {
+        values: Object.values(newRecord),
       })
-      .catch((error) => {
-        alert("Error deleting row");
-        console.error(error);
-      });
-  };
-
-  const handleSave = (id: number) => {
-    const updatedRow = data.find((row) => row.id === id);
-    const range = `Sheet1!A${id + 2}:L${id + 2}`;
-    if (updatedRow) {
-      const values = Object.values(updatedRow).slice(1);
-      const payload = {
-        range: range,
-        values: values,
-      };
-
-      axios
-        .post("https://pear-cocoon-hose.cyclic.app/update-values", payload)
-        .then(() => {
-          alert("Row updated successfully");
-          setEditRowId(null); // Exit edit mode
-          fetchData(); // Refresh the data list
-        })
-        .catch((error) => {
-          alert("Error updating row");
-          console.error(error);
-        });
-    } else {
-      console.error("Updated row not found");
-    }
-  };
-  const handleCancelEdit = () => {
-    setEditRowId(null); // Exit edit mode
-    // Optionally, revert any unsaved changes to the data here
-  };
-
-  const handleNewRecordChange = (e: ChangeEvent<any>) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setNewRecord((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleAddNewRecord = () => {
-    console.log(newRecord);
-    // Check if all necessary data is input
-    if (Object.values(newRecord).some((value) => value === "")) {
-      // If not all data is input, show modal
-      setShow(true); // show warning modal
-    } else {
-      const values = Object.values(newRecord);
-      const initialValues = {
-        name: "",
-        phoneNumber: "",
-        emailAddress: "",
-        companyName: "",
-        currentPositionTitle: "",
-        positionYouCanProvideReferral: "",
-        candidateVisaRequirements: "",
-        provideSponsorship: "",
-        additionalInformationRequired: "",
-        expectedTimeToRespond: "",
-        dateAdded: "",
-        referralsStatus: "",
-      };
-      axios
-        .post("https://pear-cocoon-hose.cyclic.app/add-row", { values })
-        .then(() => {
-          alert("New record added successfully");
-          setNewRecord(initialValues); // Reset new record form to initial values
-
-          fetchData(); // Refresh the data list
-        })
-        .catch((error) => {
-          alert("Error adding new record");
-          console.error(error);
-        });
-    }
-  };
-  const handleDateFilterChange = (e: any) => {
-    const newFilter = e.target.value;
-    setDateFilter(newFilter);
-  };
-
-  const handleSearch = (e: any) => {
-    const keyword = e.target.value.trim().toLowerCase(); // Remove whitespace and convert to lowercase
-    setSearchTerm(keyword); // Update the search term state
-    // Update the search query state based on the keyword
-    setSearchQuery(keyword);
-  };
-
-  // Filtering and sorting logic
-  const filteredData = data
-    .filter(
-      (item) =>
-        filter === "all" ||
-        item["Current Position/Title"] === filter ||
-        item["Provide Sponsorship"] === filter
-    )
-    .filter((item) =>
-      Object.values(item).some(
-        (val) =>
-          val &&
-          typeof val === "string" &&
-          val.toLowerCase().includes(searchTerm)
-      )
-    )
-    .sort((a, b) => {
-      const dateA = a["Date Added"]?.toString() || ""; // Convert to string with a fallback
-      const dateB = b["Date Added"]?.toString() || ""; // Convert to string with a fallback
-
-      if (order === "ascending") {
-        return dateA.localeCompare(dateB);
-      } else {
-        return dateB.localeCompare(dateA);
-      }
-    });
-
-  const handleRemoveAllFilters = () => {
-    // Reset the filter to show all items
-    setFilter("all"); // Assuming 'all' is the value used to display all items
-    setActiveFilter("all"); // Also reset the active filter indicator to 'all'
-    setActiveOrder(""); // Reset the active order if needed
-    // ... reset other states related to filtering or sorting if they exist
+      .then(() => {
+        setNewRecord(initialNew);
+        setShowModal(false);
+        setShowSuccess(true);
+        fetchData();
+      })
+      .catch(console.error);
   };
   const styles = {
     headFont: {
-      fontSize: "3em", // Makes the font significantly larger
       fontWeight: "bold", // Makes the font bold
       background:
         "linear-gradient(to right bottom, #d73609, #fc9553, #d05e9e, #a80f6a)", // Applies a gradient
       WebkitBackgroundClip: "text", // Clips the background to the text
       color: "transparent", // Makes the text color transparent to show the background
-      display: "inline-block", // Changes display to inline-block to properly apply the gradient
       WebkitTextFillColor: "transparent", // Ensures text fill color is transparent (for webkit browsers)
       MozBackgroundClip: "text", // For Firefox
       backgroundClip: "text", // Standard property
     },
   };
-  // Pagination logic
-  const lastIndex = currentPage * itemsPerPage;
-  const firstIndex = lastIndex - itemsPerPage;
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-
-  const currentData = filteredData.slice(firstIndex, lastIndex);
-
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-  const normalizedPage = Math.min(Math.max(currentPage, 1), totalPages);
-  // // Handle edge cases
-  // if (totalPages <= 0) {
-  //   return <div>No data to display</div>;
-  // }
-
   return (
-    <Container
-      className="shadow-lg pb-12 pl-4 pr-4 "
-      style={{
-        borderRadius: "50px",
-        borderWidth: "100",
-        borderStyle: "none",
-        maxWidth: "95%", // Set the maxWidth to 100% or another value that fits your design
-      }}
-    >
-      <Container className="mb-12 " style={{ marginTop: 10 }}>
-        <h1 style={styles.headFont} className="pt-12">
-          United Proud Women Referral List
-        </h1>
-        <div className="filters">
-          <Form.Group controlId="dateFilter" className="mt-4 ">
-            {/* Order Buttons */}
-            <button
-              onClick={() => handleOrderChange("ascending")}
-              className={`px-4 py-2 rounded-md transition-colors duration-200 mr-4 ${
-                activeOrder === "ascending"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 hover:bg-gray-300"
-              }`}
-            >
-              Ascending
-            </button>
-            <button
-              onClick={() => handleOrderChange("descending")}
-              className={`px-4 py-2 rounded-md transition-colors duration-200 mr-4 ${
-                activeOrder === "descending"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 hover:bg-gray-300"
-              }`}
-            >
-              Descending
-            </button>
-
-            {/* Filter Buttons */}
-            <button
-              onClick={() => handleFilterChange("Software Engineer")}
-              className={`px-4 py-2 rounded-md transition-colors duration-200 mr-4 ${
-                activeFilter === "Software Engineer"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 hover:bg-gray-300"
-              }`}
-            >
-              Software Engineer
-            </button>
-            <button
-              onClick={() => handleFilterChange("Green Card")}
-              className={`px-4 py-2 rounded-md transition-colors duration-200 mr-4 ${
-                activeFilter === "Green Card"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 hover:bg-gray-300"
-              }`}
-            >
-              Green Card
-            </button>
-            {/* Button to remove all filters */}
-            <button
-              className={`px-4 py-2 rounded-md transition-colors duration-200 ${
-                activeFilter === "Remove All Filters"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 hover:bg-gray-300"
-              }`}
-              onClick={() => handleRemoveAllFilters()}
-            >
-              Remove All Filters
-            </button>
-          </Form.Group>
-          <Form.Group controlId="search" className="mt-4">
-            <div className="d-flex align-items-center">
-              <Form.Label className="pt-2 pr-4">Search:</Form.Label>
-              <Form.Control
-                type="text"
-                value={searchTerm}
-                onChange={handleSearch}
-              />
-              {searchTerm && (
-                <button
-                  className="btn btn-secondary ml-2"
-                  onClick={() => setSearchTerm("")}
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-          </Form.Group>
-        </div>
-      </Container>
-      <Table responsive="sm" bordered hover>
-        <thead>
-          <tr>
-            {/* Assuming these are your headers based on the fields provided */}
-            <th>Name</th>
-            <th>Phone Number</th>
-            <th>Email Address</th>
-            <th>Company Name</th>
-            <th>Current Position/Title</th>
-            <th>Position you can provide referral</th>
-            <th>Provide Sponsorship</th>
-            <th>Candidate Visa Requirements</th>
-            <th>Additional Information Required</th>
-            <th>Expected Time to Respond</th>
-            <th>Date Added</th>
-            <th>Referrals Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {currentData.map((row) => (
-            <tr key={row.id}>
-              {Object.keys(row)
-                .filter((key) => key !== "id")
-                .map((key) => (
-                  <td key={key}>
-                    {editRowId === row.id ? (
-                      key === "Referrals Status" ? (
-                        // This field remains a dropdown in edit mode
-                        <Form.Control
-                          as="select"
-                          name={key}
-                          value={row[key]}
-                          onChange={(e) => handleRowChange(e, row.id)}
-                        >
-                          <option value="Active">Active</option>
-                          <option value="Inactive">Inactive</option>
-                        </Form.Control>
-                      ) : (
-                        // Other fields become text inputs in edit mode
-                        <Form.Control
-                          type="text"
-                          name={key}
-                          value={row[key]}
-                          onChange={(e) => handleRowChange(e, row.id)}
-                        />
-                      )
-                    ) : key === "Referrals Status" ? (
-                      // Display the text value of the dropdown when not in edit mode
-                      row[key]
-                    ) : (
-                      // Display the text value for other fields
-                      row[key]
-                    )}
-                  </td>
-                ))}
-              <td style={{ display: "flex", gap: "8px" }}>
-                {editRowId === row.id ? (
-                  <>
-                    <button
-                      className="text-white font-bold py-2 px-4 rounded"
-                      onClick={() => handleSave(row.id)}
-                      style={{ background: "#fa7f5c" }}
-                    >
-                      Save
-                    </button>
-                    <button
-                      className="text-white font-bold py-2 px-4 rounded"
-                      onClick={handleCancelEdit}
-                      style={{ background: "#6c757d" }} // Using a different background color for the cancel button
-                    >
-                      Cancel
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    className="text-white font-bold py-2 px-4 rounded"
-                    onClick={() => handleEdit(row.id)}
-                    style={{ background: "#ff9c80" }}
-                  >
-                    Edit
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
-
-          {/* Row for adding a new record */}
-          <tr>
-            <td>
-              <Form.Control
-                type="text"
-                name="name"
-                placeholder="Name"
-                onChange={handleNewRecordChange}
-                value={newRecord.name}
-              />
-            </td>
-            <td>
-              <Form.Control
-                type="tel"
-                name="phoneNumber"
-                placeholder="Phone Number"
-                onChange={handleNewRecordChange}
-                value={newRecord.phoneNumber}
-              />
-            </td>
-            <td>
-              <Form.Control
-                type="email"
-                name="emailAddress"
-                placeholder="Email Address"
-                onChange={handleNewRecordChange}
-                value={newRecord.emailAddress}
-              />
-            </td>
-            <td>
-              <Form.Control
-                type="text"
-                name="companyName"
-                placeholder="Company Name"
-                onChange={handleNewRecordChange}
-                value={newRecord.companyName}
-              />
-            </td>
-            <td>
-              <Form.Control
-                type="text"
-                name="currentPositionTitle"
-                placeholder="Current Position/Title"
-                onChange={handleNewRecordChange}
-                value={newRecord.currentPositionTitle}
-              />
-            </td>
-            <td>
-              <Form.Control
-                type="text"
-                name="positionYouCanProvideReferral"
-                placeholder="Position You Can Provide Referral"
-                onChange={handleNewRecordChange}
-                value={newRecord.positionYouCanProvideReferral}
-              />
-            </td>
-            <td>
-              <Form.Control
-                type="text"
-                name="provideSponorship"
-                placeholder="Provide Sponorship"
-                onChange={handleNewRecordChange}
-                value={newRecord.provideSponsorship}
-              />
-            </td>
-            <td>
-              <Form.Control
-                type="text"
-                name="candidateVisaRequirements"
-                placeholder="Candidate Visa Requirements"
-                onChange={handleNewRecordChange}
-                value={newRecord.candidateVisaRequirements}
-              />
-            </td>
-            <td>
-              <Form.Control
-                type="text"
-                name="additionalInformationRequired"
-                placeholder="Additional Information Required"
-                onChange={handleNewRecordChange}
-                value={newRecord.additionalInformationRequired}
-              />
-            </td>
-            <td>
-              <Form.Control
-                type="text"
-                name="expectedTimeToRespond"
-                placeholder="Expected Time to Respond"
-                onChange={handleNewRecordChange}
-                value={newRecord.expectedTimeToRespond}
-              />
-            </td>
-            <td>
-              <Form.Control
-                type="date"
-                name="dateAdded"
-                placeholder="Date Added"
-                onChange={handleNewRecordChange}
-                value={newRecord.dateAdded}
-              />
-            </td>
-            <td>
-              <Form.Control
-                as="select"
-                name="referralsStatus"
-                onChange={handleNewRecordChange}
-                value={newRecord.referralsStatus}
-              >
-                <option value="">Select Status</option>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </Form.Control>
-            </td>
-            <td>
-              <button
-                className="hover:bg-pink-700 text-white font-bold py-2 px-4 rounded"
-                onClick={handleAddNewRecord}
-                style={{ background: "#e495c1" }}
-              >
-                Add New Record
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </Table>
-
-      <Pagination className="justify-content-center">
-        {Array.from({ length: totalPages }, (_, index) => (
-          <Pagination.Item
-            key={index + 1}
-            active={index + 1 === normalizedPage}
-            onClick={() => paginate(index + 1)}
+    <Container className="mt-4">
+      <h1
+        style={styles.headFont}
+        className="pt-12 pb-12 text-center flex justify-center text-5xl"
+      >
+        United Proud Women Referral List
+      </h1>{" "}
+      {/* 全局 Toast 提示 */}
+      <ToastContainer position="top-end" className="p-3">
+        <Toast
+          onClose={() => setShowSuccess(false)}
+          show={showSuccess}
+          bg="success"
+          delay={2000}
+          autohide
+        >
+          <Toast.Body className="text-white">
+            Record added successfully
+          </Toast.Body>
+        </Toast>
+        <Toast
+          onClose={() => setShowError(false)}
+          show={showError}
+          bg="warning"
+          delay={3000}
+          autohide
+        >
+          <Toast.Body className="text-dark">
+            Please fill out all the fields
+          </Toast.Body>
+        </Toast>
+      </ToastContainer>
+      {/* 过滤区 */}
+      <Row className="mb-4 align-items-end">
+        <Col md>
+          <Form.Label>Search</Form.Label>
+          <Form.Control
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+        </Col>
+        <Col md>
+          <Form.Label>Sponsorship</Form.Label>
+          <Select
+            isMulti
+            options={sponsorshipOptions}
+            value={selectedSponsorship}
+            onChange={(opts) =>
+              setSelectedSponsorship(opts as MultiValue<OptionType>)
+            }
+            placeholder="Select sponsorship..."
+          />
+        </Col>
+        <Col md>
+          <Form.Label>Visa Requirements</Form.Label>
+          <Select
+            isMulti
+            options={visaOptions}
+            value={selectedVisaReq}
+            onChange={(opts) =>
+              setSelectedVisaReq(opts as MultiValue<OptionType>)
+            }
+            placeholder="Select visa requirements..."
+          />
+        </Col>
+        <Col md="auto" className="d-flex gap-2 mt-3">
+          <button
+            type="button"
+            className="custom-btn"
+            onClick={() => setShowModal(true)}
           >
-            {index + 1}
+            Add New Record
+          </button>
+          <button
+            type="button"
+            className="custom-btn no-hover"
+            onClick={handleClearFilters}
+          >
+            Clear Filters
+          </button>
+        </Col>
+      </Row>
+      {/* 数据展示 */}
+      {isMobile ? (
+        currentData.map((row, idx) => (
+          <Card key={row.id} className="mb-3">
+            <Card.Body>
+              <Card.Title>{row["Name"]}</Card.Title>
+              <Card.Subtitle className="mb-2 text-muted">
+                {row["Date Added"]} — {row["Referrals Status"]}
+              </Card.Subtitle>
+              <button className="custom-btn" onClick={() => handleToggle(idx)}>
+                {openRow === idx ? "Hide" : "Show"}
+              </button>
+              <Collapse in={openRow === idx}>
+                <div className="mt-2">
+                  {primaryCols.concat(secondaryCols).map((col) => (
+                    <div key={col}>
+                      <strong>{col}:</strong> {row[col]}
+                    </div>
+                  ))}
+                </div>
+              </Collapse>
+            </Card.Body>
+          </Card>
+        ))
+      ) : (
+        <Table responsive bordered hover>
+          <thead>
+            <tr>
+              {primaryCols.concat(secondaryCols).map((col) => (
+                <th key={col}>{col}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {currentData.map((row) => (
+              <tr key={row.id}>
+                {primaryCols.concat(secondaryCols).map((col) => (
+                  <td key={col}>{row[col]}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      )}
+      {/* 分页 */}
+      <Pagination className="justify-content-center mb-3">
+        {Array.from({ length: totalPages }, (_, i) => (
+          <Pagination.Item
+            key={i + 1}
+            active={i + 1 === currentPage}
+            onClick={() => setCurrentPage(i + 1)}
+          >
+            {i + 1}
           </Pagination.Item>
         ))}
       </Pagination>
-      {/* Modal */}
-      <Modal show={show} onHide={handleClose}>
+      {/* 新增弹窗 */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Missing Data</Modal.Title>
+          <Modal.Title>Add New Record</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Please input all required data before adding a new record.
+          <Form>
+            <Row>
+              {Object.keys(initialNew)
+                .filter((f) => f !== "referralsStatus")
+                .map((field) => (
+                  <Col md={6} className="mb-3" key={field}>
+                    <Form.Group controlId={`new-${field}`}>
+                      <Form.Label>
+                        {field.replace(/([A-Z])/g, " $1").trim()}
+                      </Form.Label>
+                      <Form.Control
+                        name={field}
+                        value={(newRecord as any)[field]}
+                        onChange={handleNewChange}
+                        type={
+                          field === "emailAddress"
+                            ? "email"
+                            : field === "dateAdded"
+                            ? "date"
+                            : "text"
+                        }
+                      />
+                    </Form.Group>
+                  </Col>
+                ))}
+            </Row>
+          </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            variant="secondary"
-            onClick={handleClose}
-            className="close-button"
+          <button
+            type="button"
+            className="custom-btn no-hover"
+            onClick={() => setShowModal(false)}
           >
-            Close
-          </Button>
+            Cancel
+          </button>
+          <button type="button" className="custom-btn" onClick={handleAdd}>
+            Add Record
+          </button>
         </Modal.Footer>
       </Modal>
     </Container>
