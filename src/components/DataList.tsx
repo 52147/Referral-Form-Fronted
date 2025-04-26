@@ -7,7 +7,6 @@ import {
   Table,
   Pagination,
   Modal,
-  Collapse,
   Card,
   Row,
   Col,
@@ -41,16 +40,25 @@ interface RecordType {
   referralsStatus: string;
 }
 
-function DataList() {
-  // 数据列表
+export default function DataList() {
   const [data, setData] = useState<DataRow[]>([]);
-  // 新增弹窗显隐
   const [showModal, setShowModal] = useState(false);
-  // Toast 控制
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
 
-  // 新纪录模板
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedSponsorship, setSelectedSponsorship] = useState<
+    MultiValue<OptionType>
+  >([]);
+  const [selectedVisaReq, setSelectedVisaReq] = useState<
+    MultiValue<OptionType>
+  >([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const [isMobile, setIsMobile] = useState(false);
+  const [openRow, setOpenRow] = useState<number | null>(null);
+
   const initialNew: RecordType = {
     name: "",
     phoneNumber: "",
@@ -67,22 +75,6 @@ function DataList() {
   };
   const [newRecord, setNewRecord] = useState<RecordType>(initialNew);
 
-  // 过滤/搜索/分页
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedSponsorship, setSelectedSponsorship] = useState<
-    MultiValue<OptionType>
-  >([]);
-  const [selectedVisaReq, setSelectedVisaReq] = useState<
-    MultiValue<OptionType>
-  >([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-
-  // 响应式展开
-  const [isMobile, setIsMobile] = useState(false);
-  const [openRow, setOpenRow] = useState<number | null>(null);
-
-  // 多选选项
   const sponsorshipOptions: OptionType[] = [
     { value: "h1b", label: "H-1B" },
     { value: "opt", label: "OPT" },
@@ -101,7 +93,6 @@ function DataList() {
     { value: "l1", label: "L-1" },
   ];
 
-  // 表头列
   const primaryCols = [
     "Name",
     "Phone Number",
@@ -119,25 +110,24 @@ function DataList() {
     "Expected Time to Respond",
   ];
 
-  // 获取后端数据
-  const fetchData = () => {
+  // 拉后端数据
+  useEffect(() => {
     axios
       .get("https://referral-form-backend.onrender.com/data")
-      .then((response) => {
-        const headers = response.data[0] as string[];
-        const rows = response.data.slice(1) as any[][];
-        const formatted = rows.map((row, idx) => {
-          const obj: DataRow = { id: idx };
-          headers.forEach((h, i) => (obj[h] = row[i]));
+      .then((res) => {
+        const headers = res.data[0] as string[];
+        const rows = res.data.slice(1) as any[][];
+        const formatted = rows.map((r, i) => {
+          const obj: DataRow = { id: i };
+          headers.forEach((h, idx) => (obj[h] = r[idx]));
           return obj;
         });
         setData(formatted);
       })
       .catch(console.error);
-  };
-  useEffect(fetchData, []);
+  }, []);
 
-  // 响应式监听
+  // 监听屏宽
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", onResize);
@@ -145,55 +135,53 @@ function DataList() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // 辅助：归一化文本（无视空格/符号/大小写）
   const normalize = (s = "") => s.toLowerCase().replace(/[^a-z0-9]/g, "");
 
   // 过滤逻辑
   const filtered = data.filter((row) => {
-    // 全局搜索
-    if (searchTerm) {
-      const allText = Object.values(row).join(" ").toLowerCase();
-      if (!allText.includes(searchTerm)) return false;
-    }
-    // Sponsorship 多选
-    if (selectedSponsorship.length) {
-      const fieldVal = normalize(row["Provide Sponsorship"]);
-      if (!selectedSponsorship.every((opt) => fieldVal.includes(opt.value)))
-        return false;
-    }
-    // Visa Requirements 多选
-    if (selectedVisaReq.length) {
-      const fieldVal = normalize(row["Candidate's Visa Requirements"]);
-      if (!selectedVisaReq.every((opt) => fieldVal.includes(opt.value)))
-        return false;
-    }
+    if (
+      searchTerm &&
+      !Object.values(row).join(" ").toLowerCase().includes(searchTerm)
+    )
+      return false;
+
+    if (
+      selectedSponsorship.length &&
+      !selectedSponsorship.every((opt) =>
+        normalize(row["Provide Sponsorship"]).includes(opt.value)
+      )
+    )
+      return false;
+
+    if (
+      selectedVisaReq.length &&
+      !selectedVisaReq.every((opt) =>
+        normalize(row["Candidate's Visa Requirements"]).includes(opt.value)
+      )
+    )
+      return false;
+
     return true;
   });
+
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const currentData = filtered.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // 处理各类交互
+  // 控件 handlers
   const handleSearchChange = (e: ChangeEvent<any>) =>
     setSearchTerm(e.target.value.trim().toLowerCase());
   const handleNewChange = (e: ChangeEvent<any>) =>
-    setNewRecord((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  const handleToggle = (idx: number) =>
-    setOpenRow(openRow === idx ? null : idx);
-
-  // 清除所有过滤器
-  const handleClearFilters = () => {
+    setNewRecord((p) => ({ ...p, [e.target.name]: e.target.value }));
+  const handleClear = () => {
     setSearchTerm("");
     setSelectedSponsorship([]);
     setSelectedVisaReq([]);
     setCurrentPage(1);
   };
-
-  // 添加新纪录
   const handleAdd = () => {
-    // 检查必填
     const missing = Object.entries(newRecord).filter(
       ([k, v]) => k !== "referralsStatus" && v === ""
     );
@@ -209,55 +197,51 @@ function DataList() {
         setNewRecord(initialNew);
         setShowModal(false);
         setShowSuccess(true);
-        fetchData();
+        setTimeout(() => window.location.reload(), 600);
       })
       .catch(console.error);
   };
-  const styles = {
-    headFont: {
-      fontWeight: "bold", // Makes the font bold
-      background:
-        "linear-gradient(to right bottom, #d73609, #fc9553, #d05e9e, #a80f6a)", // Applies a gradient
-      WebkitBackgroundClip: "text", // Clips the background to the text
-      color: "transparent", // Makes the text color transparent to show the background
-      WebkitTextFillColor: "transparent", // Ensures text fill color is transparent (for webkit browsers)
-      MozBackgroundClip: "text", // For Firefox
-      backgroundClip: "text", // Standard property
-    },
-  };
+
   return (
     <Container className="mt-4">
-      <h1
-        style={styles.headFont}
-        className="pt-12 pb-12 text-center flex justify-center text-5xl"
-      >
-        United Proud Women Referral List
-      </h1>{" "}
-      {/* 全局 Toast 提示 */}
+      {/* Toast 提示 */}
       <ToastContainer position="top-end" className="p-3">
         <Toast
-          onClose={() => setShowSuccess(false)}
           show={showSuccess}
           bg="success"
-          delay={2000}
           autohide
+          delay={2000}
+          onClose={() => setShowSuccess(false)}
         >
           <Toast.Body className="text-white">
             Record added successfully
           </Toast.Body>
         </Toast>
         <Toast
-          onClose={() => setShowError(false)}
           show={showError}
           bg="warning"
-          delay={3000}
           autohide
+          delay={3000}
+          onClose={() => setShowError(false)}
         >
           <Toast.Body className="text-dark">
-            Please fill out all the fields
+            Please fill out all fields
           </Toast.Body>
         </Toast>
       </ToastContainer>
+
+      <h1
+        className="text-center text-5xl font-bold mb-12 mt-12"
+        style={{
+          background:
+            "linear-gradient(to right bottom, #d73609, #fc9553, #d05e9e, #a80f6a)", // Applies a gradient background
+          WebkitBackgroundClip: "text", // Clips the background to the text
+          WebkitTextFillColor: "transparent", // Makes the text color transparent to show the gradient
+        }}
+      >
+        United Proud Women Referral List
+      </h1>
+
       {/* 过滤区 */}
       <Row className="mb-4 align-items-end">
         <Col md>
@@ -271,11 +255,12 @@ function DataList() {
         <Col md>
           <Form.Label>Sponsorship</Form.Label>
           <Select
+            instanceId="sponsorship-select"
             isMulti
             options={sponsorshipOptions}
             value={selectedSponsorship}
-            onChange={(opts) =>
-              setSelectedSponsorship(opts as MultiValue<OptionType>)
+            onChange={(o) =>
+              setSelectedSponsorship(o as MultiValue<OptionType>)
             }
             placeholder="Select sponsorship..."
           />
@@ -283,57 +268,52 @@ function DataList() {
         <Col md>
           <Form.Label>Visa Requirements</Form.Label>
           <Select
+            instanceId="visa-select"
             isMulti
             options={visaOptions}
             value={selectedVisaReq}
-            onChange={(opts) =>
-              setSelectedVisaReq(opts as MultiValue<OptionType>)
-            }
+            onChange={(o) => setSelectedVisaReq(o as MultiValue<OptionType>)}
             placeholder="Select visa requirements..."
           />
         </Col>
         <Col md="auto" className="d-flex gap-2 mt-3">
-          <button
-            type="button"
-            className="custom-btn"
-            onClick={() => setShowModal(true)}
-          >
+          <button className="custom-btn" onClick={() => setShowModal(true)}>
             Add New Record
           </button>
-          <button
-            type="button"
-            className="custom-btn no-hover"
-            onClick={handleClearFilters}
-          >
+          <button className="custom-btn no-hover" onClick={handleClear}>
             Clear Filters
           </button>
         </Col>
       </Row>
-      {/* 数据展示 */}
+
+      {/* 手机视图：手动条件渲染 */}
       {isMobile ? (
-        currentData.map((row, idx) => (
+        currentData.map((row) => (
           <Card key={row.id} className="mb-3">
             <Card.Body>
-              <Card.Title>{row["Name"]}</Card.Title>
-              <Card.Subtitle className="mb-2 text-muted">
-                {row["Date Added"]} — {row["Referrals Status"]}
-              </Card.Subtitle>
-              <button className="custom-btn" onClick={() => handleToggle(idx)}>
-                {openRow === idx ? "Hide" : "Show"}
+              <Card.Title>
+                {row["Name"]} — {row["Date Added"]} — {row["Referrals Status"]}
+              </Card.Title>
+              <button
+                className="custom-btn"
+                onClick={() => setOpenRow(openRow === row.id ? null : row.id)}
+              >
+                {openRow === row.id ? "Hide" : "Show"}
               </button>
-              <Collapse in={openRow === idx}>
+              {openRow === row.id && (
                 <div className="mt-2">
                   {primaryCols.concat(secondaryCols).map((col) => (
-                    <div key={col}>
+                    <div key={col} className="mb-2">
                       <strong>{col}:</strong> {row[col]}
                     </div>
                   ))}
                 </div>
-              </Collapse>
+              )}
             </Card.Body>
           </Card>
         ))
       ) : (
+        // 桌面视图：普通表格
         <Table responsive bordered hover>
           <thead>
             <tr>
@@ -353,7 +333,8 @@ function DataList() {
           </tbody>
         </Table>
       )}
-      {/* 分页 */}
+
+      {/* 分页 */}
       <Pagination className="justify-content-center mb-3">
         {Array.from({ length: totalPages }, (_, i) => (
           <Pagination.Item
@@ -365,6 +346,7 @@ function DataList() {
           </Pagination.Item>
         ))}
       </Pagination>
+
       {/* 新增弹窗 */}
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
         <Modal.Header closeButton>
@@ -401,13 +383,12 @@ function DataList() {
         </Modal.Body>
         <Modal.Footer>
           <button
-            type="button"
             className="custom-btn no-hover"
             onClick={() => setShowModal(false)}
           >
             Cancel
           </button>
-          <button type="button" className="custom-btn" onClick={handleAdd}>
+          <button className="custom-btn" onClick={handleAdd}>
             Add Record
           </button>
         </Modal.Footer>
@@ -415,5 +396,3 @@ function DataList() {
     </Container>
   );
 }
-
-export default DataList;
