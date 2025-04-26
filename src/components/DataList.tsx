@@ -145,21 +145,24 @@ export default function DataList() {
     )
       return false;
 
-    if (
-      selectedSponsorship.length &&
-      !selectedSponsorship.every((opt) =>
-        normalize(row["Provide Sponsorship"]).includes(opt.value)
-      )
-    )
-      return false;
-
-    if (
-      selectedVisaReq.length &&
-      !selectedVisaReq.every((opt) =>
-        normalize(row["Candidate's Visa Requirements"]).includes(opt.value)
-      )
-    )
-      return false;
+    // Sponsorship 多选（拆分逗号、去空格、去破折号后再对比）
+    if (selectedSponsorship.length) {
+      const raw = (row["Provide Sponsorship"] || "") as string;
+      const parts = raw
+        .split(",")
+        .map((s) => s.trim().replace(/-/g, "").toLowerCase());
+      if (!selectedSponsorship.every((opt) => parts.includes(opt.value)))
+        return false;
+    }
+    // Visa Requirements 多选
+    if (selectedVisaReq.length) {
+      const raw = (row["Candidate's Visa Requirements"] || "") as string;
+      const parts = raw
+        .split(",")
+        .map((s) => s.trim().replace(/-/g, "").toLowerCase());
+      if (!selectedVisaReq.every((opt) => parts.includes(opt.value)))
+        return false;
+    }
 
     return true;
   });
@@ -357,27 +360,31 @@ export default function DataList() {
             <Row>
               {Object.keys(initialNew)
                 .filter((f) => f !== "referralsStatus")
-                .map((field) => (
-                  <Col md={6} className="mb-3" key={field}>
-                    <Form.Group controlId={`new-${field}`}>
-                      <Form.Label>
-                        {field.replace(/([A-Z])/g, " $1").trim()}
-                      </Form.Label>
-                      <Form.Control
-                        name={field}
-                        value={(newRecord as any)[field]}
-                        onChange={handleNewChange}
-                        type={
-                          field === "emailAddress"
-                            ? "email"
-                            : field === "dateAdded"
-                            ? "date"
-                            : "text"
-                        }
-                      />
-                    </Form.Group>
-                  </Col>
-                ))}
+                .map((field) => {
+                  const label = field
+                    .replace(/([A-Z])/g, " $1")
+                    .replace(/^./, (str) => str.toUpperCase())
+                    .trim();
+                  return (
+                    <Col md={6} className="mb-3" key={field}>
+                      <Form.Group controlId={`new-${field}`}>
+                        <Form.Label>{label}</Form.Label>
+                        <Form.Control
+                          name={field}
+                          value={(newRecord as any)[field]}
+                          onChange={handleNewChange}
+                          type={
+                            field === "emailAddress"
+                              ? "email"
+                              : field === "dateAdded"
+                              ? "date"
+                              : "text"
+                          }
+                        />
+                      </Form.Group>
+                    </Col>
+                  );
+                })}
             </Row>
           </Form>
         </Modal.Body>
